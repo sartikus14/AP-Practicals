@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Muscle Practical Drill</title>
+<style>:root{color-scheme:light dark}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head><body>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: one study column; mode tabs + lab/species chips on top, working panel below. Muscle-red accent on a cool neutral. */
+:root{
+  --bg:#f1f0ef; --surface:#ffffff; --sunk:#e6e3e1; --fg:#1f1a19; --muted:#6a605d;
+  --accent:#a23b32; --accent-ink:#ffffff; --tag:#f0cf4f; --tag-ink:#2a2306;
+  --ok:#2f7d4a; --ok-bg:#e1f1e6; --bad:#b3412f; --bad-bg:#f7e3df; --line:#d8d2cf;
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible",ui-sans-serif,system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#141111; --surface:#1e1918; --sunk:#29221f; --fg:#ece6e3; --muted:#a69a96;
+  --accent:#e27a6e; --accent-ink:#2a0c08; --tag:#d9b73c; --tag-ink:#231c03;
+  --ok:#6cc58b; --ok-bg:#1c3326; --bad:#ec8a77; --bad-bg:#3a201b; --line:#382f2c; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141111; --surface:#1e1918; --sunk:#29221f; --fg:#ece6e3; --muted:#a69a96;
+  --accent:#e27a6e; --accent-ink:#2a0c08; --tag:#d9b73c; --tag-ink:#231c03;
+  --ok:#6cc58b; --ok-bg:#1c3326; --bad:#ec8a77; --bad-bg:#3a201b; --line:#382f2c; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 16px 64px;display:flex;flex-direction:column;gap:18px}
+.wrap.narrow{max-width:760px}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,6vw,40px);line-height:1.05;margin:0;letter-spacing:-.01em;text-wrap:balance}
+.sub{color:var(--muted);margin:6px 0 0}
+.tabs{display:flex;gap:6px;background:var(--sunk);padding:4px;border-radius:10px;width:fit-content;max-width:100%;flex-wrap:wrap}
+.tabs button{border:0;background:transparent;color:var(--muted);font:700 15px var(--body);padding:8px 14px;border-radius:7px;cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--surface);color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.filters{display:flex;flex-direction:column;gap:8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chips .lbl{font:500 12px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);min-width:64px}
+.chip{border:1.5px solid var(--line);background:transparent;color:var(--muted);font:700 14px var(--body);padding:6px 12px;border-radius:999px;cursor:pointer}
+.chip[aria-pressed="true"]{border-color:var(--accent);color:var(--fg);background:color-mix(in srgb,var(--accent) 14%,transparent)}
+button:focus-visible,.card:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:16px}
+@media (max-width:520px){.panel{padding:14px}}
+.meta{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font:500 13px var(--mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.tag{display:inline-flex;align-items:center;gap:8px;background:var(--tag);color:var(--tag-ink);font:500 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;padding:4px 10px 4px 8px;border-radius:4px;width:fit-content}
+.tag::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--tag-ink)}
+.btn{border:0;border-radius:9px;font:700 15px var(--body);padding:11px 16px;cursor:pointer;background:var(--sunk);color:var(--fg)}
+.btn.primary{background:var(--accent);color:var(--accent-ink)}
+.btn.ok{background:var(--ok-bg);color:var(--ok)}
+.btn.bad{background:var(--bad-bg);color:var(--bad)}
+.btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--muted)}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+/* diagrams */
+.dhead{display:flex;gap:8px;align-items:center}
+.dhead select{flex:1;min-width:0;font:700 15px var(--body);padding:10px 12px;border-radius:9px;border:1.5px solid var(--line);background:var(--bg);color:var(--fg)}
+.dwrap{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:820px){.dwrap{grid-template-columns:1fr}}
+.plate{position:relative;background:#000;border-radius:10px;border:1px solid var(--line);overflow:hidden;line-height:0;margin-inline:auto;width:100%}
+.plate img{width:100%;height:auto;display:block}
+#d-layer{position:absolute;inset:0}
+.mk{position:absolute;border:1.5px solid #3a3205;background:#f3d35a;color:#2a2306;font:700 11px/1 var(--mono);display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:3px;box-sizing:border-box;overflow:hidden}
+.mk.blank{background:#e4e1df;border:0;cursor:default}
+.mk.strip{transform:translate(-50%,-50%) rotate(var(--ang));}
+.mk.pin{width:24px;height:24px;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 0 2px #fff}
+.mk.sel{outline:3px solid #a23b32;outline-offset:1px;z-index:2}
+.mk.ok{background:#bfe6c9;border-color:#2f7d4a;color:#1d4f2e}
+.mk.shown{background:#f4cfc6;border-color:#b3412f;color:#5a1d12}
+.dlist{display:flex;flex-direction:column;gap:12px;min-width:0}
+.dlist ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.drow{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:8px;align-items:center}
+.drow .n{font:700 13px var(--mono);color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+.drow input{width:100%;min-width:0;font:400 15px var(--body);padding:8px 10px;border-radius:8px;border:1.5px solid var(--line);background:var(--bg);color:var(--fg)}
+.drow input:focus{outline:none;border-color:var(--accent)}
+.drow.ok input{border-color:var(--ok);background:var(--ok-bg);color:var(--ok);font-weight:700}
+.drow.shown input{border-color:var(--bad);background:var(--bad-bg);color:var(--bad);font-weight:700}
+.drow.wrong input{border-color:var(--bad)}
+.drow button{border:0;background:transparent;color:var(--muted);font:700 13px var(--body);cursor:pointer;padding:6px}
+.bank{display:flex;flex-wrap:wrap;gap:6px}
+.bank button{border:1.5px solid var(--line);background:var(--bg);color:var(--fg);font:400 13px var(--body);padding:5px 9px;border-radius:999px;cursor:pointer}
+.bank button.used{opacity:.35}
+.note{font-size:14px;color:var(--muted);margin:0;max-width:70ch}
+/* flashcards and quiz */
+.card{min-height:230px;border:1.5px dashed var(--line);border-radius:12px;padding:24px;display:flex;flex-direction:column;justify-content:center;gap:10px;cursor:pointer;background:var(--bg)}
+.card .big{font-family:var(--display);font-weight:800;font-size:clamp(24px,5vw,34px);line-height:1.1;text-wrap:balance}
+.card .kick{font:500 13px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.card .tip{font-size:17px;max-width:60ch}
+.card .hint{font-size:13px;color:var(--muted)}
+.card dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:0;font-size:16px;max-width:60ch}
+.card dt{font:500 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:3px}
+.card dd{margin:0}
+.q{font-size:18px;max-width:60ch}
+.q b{font-family:var(--display);font-weight:800}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:520px){.opts{grid-template-columns:1fr}}
+.opt{text-align:left;border:1.5px solid var(--line);background:var(--bg);color:var(--fg);font:700 16px var(--body);padding:13px 14px;border-radius:10px;cursor:pointer;min-width:0}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt.right{border-color:var(--ok);background:var(--ok-bg);color:var(--ok)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-bg);color:var(--bad)}
+.opt:disabled{cursor:default}
+.explain{border-left:3px solid var(--accent);padding:4px 0 4px 12px}
+.missed h3{font:500 12px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+.missed ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px;font-size:15px}
+.kbd{font:500 12px var(--mono);color:var(--muted)}
+/* tips */
+.tips{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:12px}
+.tipbox{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.tipbox h4{font-family:var(--display);font-weight:800;font-size:18px;margin:0}
+.tipbox ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px;font-size:15px}
+.tbl{overflow-x:auto}
+.tbl table{border-collapse:collapse;font-size:14px;width:100%}
+.tbl th,.tbl td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.tbl th{font:500 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+@media (prefers-reduced-motion:no-preference){.card{transition:background .15s}}
+</style>
+
+<div class="wrap" id="wrap">
+  <header>
+    <h1>Muscle Practical Drill</h1>
+    <p class="sub">A&amp;P 1 cat and human muscles from Labs 1 to 3. Label real cat dissection photos and human anatomy plates, then drill with flashcards and a station quiz.</p>
+  </header>
+
+  <div class="tabs" role="tablist">
+    <button role="tab" id="t-diag" aria-selected="true" data-mode="diag">Label diagrams</button>
+    <button role="tab" id="t-cards" aria-selected="false" data-mode="cards">Flashcards</button>
+    <button role="tab" id="t-quiz" aria-selected="false" data-mode="quiz">Station quiz</button>
+    <button role="tab" id="t-tips" aria-selected="false" data-mode="tips">Cat vs. human</button>
+  </div>
+
+  <div class="filters" id="filters">
+    <div class="chips" id="chips-lab"><span class="lbl">Lab</span></div>
+    <div class="chips" id="chips-sp"><span class="lbl">Species</span></div>
+  </div>
+
+  <section id="v-diag" class="panel">
+    <div class="meta"><span class="tag" id="d-tag">Diagram</span><span id="d-prog"></span></div>
+    <div class="dhead">
+      <button class="btn ghost" id="d-prev" aria-label="Previous diagram">&larr;</button>
+      <select id="d-pick" aria-label="Choose a diagram"></select>
+      <button class="btn ghost" id="d-next" aria-label="Next diagram">&rarr;</button>
+    </div>
+    <div class="dwrap">
+      <div class="plate" id="plate"><img id="d-img" alt=""><div id="d-layer"></div></div>
+      <div class="dlist">
+        <div class="row">
+          <button class="btn ghost" id="d-bank">Show word bank</button>
+          <button class="btn ghost" id="d-revall">Reveal all</button>
+          <button class="btn ghost" id="d-reset">Clear</button>
+        </div>
+        <div class="bank" id="d-bankbox" hidden></div>
+        <ol id="d-rows"></ol>
+      </div>
+    </div>
+    <p class="note" id="d-note"></p>
+    <p class="note">Tap a numbered box, strip or dot, type the muscle, press Enter. Spelling within a letter or two counts. Human plates: Henry Gray, <i>Anatomy of the Human Body</i> (1918), via Wikimedia Commons. Public domain. Cat dissection photos: Elizabeth Swislosky and Kristen Roosa, <a href="https://courses.lumenlearning.com/suny-oneonta-comparativeanatomy/chapter/cat/" target="_blank" rel="noopener">Atlas of Comparative Vertebrate Anatomy</a> (SUNY Oneonta), CC BY 4.0. The yellow boxes cover the original labels.</p>
+  </section>
+
+  <section id="v-cards" class="panel" hidden>
+    <div class="meta"><span class="tag" id="c-tag">Card</span><span id="c-count"></span></div>
+    <div class="card" id="card" tabindex="0" role="button" aria-label="Flip card"></div>
+    <div class="row">
+      <button class="btn bad" id="c-again">Again</button>
+      <button class="btn ok" id="c-got">Got it</button>
+      <button class="btn ghost" id="c-rev">Reverse: show clues first</button>
+      <button class="btn ghost" id="c-shuf">Reshuffle</button>
+    </div>
+    <span class="kbd">Space flips. Right arrow = got it. Left arrow = again.</span>
+  </section>
+
+  <section id="v-quiz" class="panel" hidden>
+    <div class="meta"><span class="tag" id="q-tag">Station 1</span><span id="q-score"></span></div>
+    <div class="q" id="q-text"></div>
+    <div class="opts" id="q-opts"></div>
+    <div class="explain" id="q-exp" hidden></div>
+    <div class="row"><button class="btn primary" id="q-next" hidden>Next station</button><button class="btn ghost" id="q-reset">Reset score</button></div>
+    <div class="missed" id="q-missed" hidden><h3>Missed this session</h3><ul id="q-missed-list"></ul></div>
+  </section>
+
+  <section id="v-tips" hidden>
+    <div class="tips">
+      <div class="tipbox" style="grid-column:1/-1"><h4>Cat muscle and its human match</h4>
+        <div class="tbl"><table>
+          <thead><tr><th>Cat</th><th>Human equivalent</th><th>How to spot it on the cat</th></tr></thead>
+          <tbody>
+            <tr><td>Pectoantebrachialis</td><td>None</td><td>Thin, narrow strip on top of the pectoralis major, from manubrium to forearm. Use it as a landmark.</td></tr>
+            <tr><td>Pectoralis major / minor</td><td>Pectoralis major / minor</td><td>In the cat, the minor is the bigger, more caudal sheet. The major is just under the pectoantebrachialis.</td></tr>
+            <tr><td>Xiphihumeralis</td><td>None (part of pectoral group)</td><td>Most caudal chest muscle, from the xiphoid to the humerus. It passes under the pectoralis minor.</td></tr>
+            <tr><td>Serratus ventralis</td><td>Serratus anterior</td><td>Fan of slips on the side of the ribs, under the scapula. Lift the forelimb away to see it.</td></tr>
+            <tr><td>Clavo-, acromio-, spinotrapezius</td><td>Trapezius</td><td>Three separate sheets, front to back: clavo (neck), acromio (over the scapula), spino (most caudal, triangular).</td></tr>
+            <tr><td>Clavo-, acromio-, spinodeltoid</td><td>Deltoid</td><td>Clavodeltoid (clavobrachialis) continues from the clavotrapezius down the arm. Acromiodeltoid sits on the shoulder. Spinodeltoid is behind it, from the scapular spine.</td></tr>
+            <tr><td>Epitrochlearis</td><td>None</td><td>Flat sheet on the medial side of the arm, coming off the latissimus over the triceps. Ends at the elbow.</td></tr>
+            <tr><td>Rhomboids</td><td>Rhomboid major / minor</td><td>Between the scapula and the spine, under the trapezius sheets.</td></tr>
+            <tr><td>Adductor femoris</td><td>Adductor magnus</td><td>Large medial thigh muscle under the gracilis. The adductor longus is the small strip next to it, toward the head.</td></tr>
+            <tr><td>Tensor fasciae latae</td><td>Tensor fasciae latae</td><td>Triangle at the front of the hip that runs into the white fascia lata over the thigh.</td></tr>
+          </tbody></table></div>
+      </div>
+      <div class="tipbox"><h4>Telling the cat chest apart</h4><ul>
+        <li>Work from the surface down: pectoantebrachialis, then pectoralis major, then pectoralis minor, then xiphihumeralis.</li>
+        <li>The cat pectoralis minor is larger than the major. That is the reverse of humans, and a common trick question.</li>
+        <li>Latissimus dorsi wraps from the back around to the armpit, just behind the xiphihumeralis.</li>
+      </ul></div>
+      <div class="tipbox"><h4>Back and abdomen</h4><ul>
+        <li>Abdominal layers, outside in: external oblique, internal oblique, transversus abdominis. Rectus abdominis runs up the midline.</li>
+        <li>External oblique fibers run like hands in front pockets (down and toward the midline). Internal oblique fibers run at a right angle to them.</li>
+        <li>Transversus abdominis fibers run horizontally.</li>
+        <li>The cat rectus abdominis is hard to see without cutting the obliques, which is why your sheet flags it.</li>
+      </ul></div>
+      <div class="tipbox"><h4>Thigh and leg</h4><ul>
+        <li>Sartorius is the long strap crossing the front of the thigh. On the cat it is a wide band on the medial side.</li>
+        <li>Gracilis is the wide flat sheet covering the medial thigh in the cat. In humans it is a thin strap.</li>
+        <li>Hamstrings, lateral to medial: biceps femoris, semitendinosus, semimembranosus.</li>
+        <li>Quadriceps on your sheet: rectus femoris (middle front), vastus lateralis (outer), vastus medialis (inner).</li>
+        <li>Gastrocnemius is the two-headed surface calf muscle. Soleus is flat and lies under it.</li>
+      </ul></div>
+    </div>
+  </section>
+</div>
+
+<script>
+const LABS={1:"Lab 1 · Chest & arm",2:"Lab 2 · Back & abdomen",3:"Lab 3 · Hip & leg"};
+const SP={C:"Cat",H:"Human"};
+// lab|species(C,H,B)|name|location|action|tip
+const RAW=`
+1|C|Pectoantebrachialis|Most superficial chest muscle; thin narrow band from the manubrium to the forearm fascia.|Adducts the forelimb.|Cat only. Use it as the landmark for finding the pectorals underneath.
+1|B|Pectoralis major|Cat: under the pectoantebrachialis, from the sternum to the humerus. Human: large fan from the clavicle and sternum to the humerus.|Adducts and medially rotates the arm; flexes the shoulder.|In the cat it is smaller than the pectoralis minor.
+1|B|Pectoralis minor|Cat: large sheet caudal to the pectoralis major. Human: small, deep to the pectoralis major, ribs 3 to 5 to the coracoid process.|Cat: adducts the forelimb. Human: pulls the scapula forward and down.|Cat pec minor is bigger than cat pec major. In humans it is the reverse.
+1|C|Xiphihumeralis|Most caudal chest muscle, from the xiphoid process to the humerus, passing deep to the pectoralis minor.|Adducts the forelimb.|Cat only. The name tells you where it goes: xiphoid to humerus.
+1|C|Serratus ventralis|Fan of slips from the ribs to the vertebral border of the scapula, on the side of the thorax.|Pulls the scapula forward and down; holds the trunk between the forelimbs.|Called serratus anterior in humans.
+1|H|Serratus anterior|Sawtooth slips on the side of the ribcage (ribs 1 to 8) to the medial border of the scapula.|Protracts the scapula and rotates it upward. The "boxer's muscle."|Same muscle as the cat serratus ventralis. Your sheet crosses out ventralis for the human list.
+1|B|Clavodeltoid|Cat: continues from the clavotrapezius over the clavicle down the front of the arm to the ulna. Also called clavobrachialis.|Flexes the forearm.|Matches the clavicular part of the human deltoid.
+1|C|Epitrochlearis|Flat sheet on the medial side of the arm over the triceps, coming off the latissimus dorsi and ending at the elbow.|Extends the forearm.|Cat only. Peel it back to see the triceps.
+1|B|Triceps brachii|Posterior arm. Three heads (long, lateral, medial) to the olecranon.|Extends the forearm.|In the cat the long head is the big part you see from the medial side.
+1|B|Biceps brachii|Anterior arm, from the scapula (two heads in humans) to the radial tuberosity.|Flexes the forearm and supinates the hand.|On the cat it is under the pectoral sheets, on the medial side of the humerus.
+2|C|Clavotrapezius|Most cranial trapezius sheet, from the skull and neck to the clavicle. Continues into the clavodeltoid.|Elevates and draws the scapula forward.|One of three cat trapezius sheets. Human match: the upper trapezius.
+2|C|Acromiotrapezius|Middle trapezius sheet, from the cervical and thoracic spines to the acromion and scapular spine.|Holds the scapulae together and pulls them toward the spine.|Rectangular sheet over the shoulder blade.
+2|C|Spinotrapezius|Most caudal trapezius sheet, triangular, from the thoracic spines to the scapular spine.|Pulls the scapula back and up.|Its point aims down the back toward the lumbar region.
+2|H|Trapezius|Large diamond from the occipital bone and the cervical and thoracic spines to the clavicle, acromion and scapular spine.|Elevates, retracts and depresses the scapula.|The three cat sheets together make the one human trapezius.
+2|C|Acromiodeltoid|Short thick muscle on the shoulder, from the acromion to the humerus, between the clavodeltoid and the spinodeltoid.|Flexes and rotates the humerus.|Middle of the three cat deltoids.
+2|C|Spinodeltoid|Caudal to the acromiodeltoid, from the scapular spine to the humerus.|Flexes and rotates the humerus.|Most caudal cat deltoid. It sits just in front of the triceps.
+2|H|Deltoid|Caps the shoulder, from the clavicle, acromion and scapular spine to the deltoid tuberosity.|Abducts the arm; front fibers flex it, back fibers extend it.|The cat splits it into clavo-, acromio- and spinodeltoid.
+2|B|Rhomboids|Between the vertebral border of the scapula and the spinous processes, deep to the trapezius. Human: rhomboid major and minor.|Retract and elevate the scapula.|Reflect the trapezius sheets to find them.
+2|B|Latissimus dorsi|Broad back muscle from the lower thoracic and lumbar spines (thoracolumbar fascia) to the humerus.|Extends, adducts and medially rotates the arm.|On the cat it runs from the back toward the armpit, caudal to the trapezius sheets.
+2|B|External oblique|Outermost abdominal layer, from the lower ribs to the linea alba and iliac crest.|Compresses the abdomen; flexes and rotates the trunk.|Fibers run down and toward the midline, like hands in front pockets.
+2|B|Internal oblique|Middle abdominal layer, deep to the external oblique.|Compresses the abdomen; flexes and rotates the trunk.|Fibers run at a right angle to the external oblique.
+2|B|Transversus abdominis|Deepest abdominal layer.|Compresses the abdomen.|Fibers run horizontally across the belly.
+2|B|Rectus abdominis|Vertical strap on each side of the linea alba, from the pubis to the sternum and costal cartilages.|Flexes the trunk.|Human: "six-pack" with tendinous inscriptions. Cat: under the oblique layers, so it is hard to see.
+3|B|Gluteus medius|Lateral hip, from the ilium to the greater trochanter. Cat: larger than the gluteus maximus and cranial to it.|Abducts the thigh.|In humans it is mostly under the gluteus maximus. In the cat it is the bigger glute.
+3|B|Gluteus maximus|Buttock, from the ilium, sacrum and coccyx to the femur and iliotibial tract.|Extends and laterally rotates the thigh.|Cat: small and thin, caudal to the gluteus medius. Human: the largest glute.
+3|B|Tensor fasciae latae|Front of the hip, from the iliac crest into the fascia lata (iliotibial tract).|Tightens the fascia lata; flexes and abducts the thigh.|Your sheet spells it "tensor fascia latte." Either spelling is fine here.
+3|B|Sartorius|Long strap from the anterior superior iliac spine across the thigh to the medial tibia. Cat: wide band on the medial thigh.|Flexes, abducts and laterally rotates the thigh; flexes the knee.|Longest muscle in the human body. The "tailor's muscle."
+3|B|Gracilis|Medial thigh, from the pubis to the medial tibia. Cat: wide flat sheet covering the back half of the medial thigh.|Adducts the thigh; flexes the knee.|Human: a thin strap. Cat: a broad sheet.
+3|B|Biceps femoris|Lateral hamstring, from the ischial tuberosity to the head of the fibula. Cat: large sheet covering most of the lateral thigh.|Flexes the knee; extends the thigh.|Most lateral hamstring.
+3|B|Semitendinosus|Medial hamstring, superficial, with a long tendon to the medial tibia.|Flexes the knee; extends the thigh.|Sits on top of the semimembranosus. Think "tendinosus = long tendon."
+3|B|Semimembranosus|Medial hamstring, deep to the semitendinosus, from the ischial tuberosity to the medial tibia.|Flexes the knee; extends the thigh.|Most medial hamstring. Wider and flatter than the semitendinosus.
+3|B|Vastus medialis|Medial quadriceps, on the inner front of the thigh above the knee.|Extends the knee.|The teardrop bulge above the inner knee.
+3|B|Vastus lateralis|Lateral quadriceps, the big outer front thigh muscle.|Extends the knee.|Largest of the quadriceps.
+3|B|Rectus femoris|Middle front of the thigh, from the anterior inferior iliac spine to the patella.|Extends the knee; flexes the thigh.|Only quadriceps muscle that crosses the hip. Your sheet swaps it in for vastus intermedius.
+3|C|Adductor femoris|Large medial thigh muscle deep to the gracilis, from the pubis and ischium to the femur.|Adducts the thigh.|Human match: adductor magnus.
+3|B|Adductor longus|Small strap on the medial thigh, cranial to the adductor femoris (cat) or magnus (human), from the pubis to the femur.|Adducts the thigh.|Narrow muscle next to the pectineus.
+3|B|Gastrocnemius|Surface calf muscle with medial and lateral heads, from the femoral condyles to the calcaneus by the Achilles tendon.|Plantar flexes the foot; flexes the knee.|Two heads make the bulge of the calf.
+3|B|Soleus|Flat muscle deep to the gastrocnemius, from the tibia and fibula into the Achilles tendon.|Plantar flexes the foot.|Shaped like a sole fish. Look under the gastrocnemius.
+`;
+const ITEMS=RAW.trim().split("\n").map((l,i)=>{const p=l.split("|");return{id:i,lab:+p[0],sp:p[1],name:p[2],loc:p[3],act:p[4],tip:p[5]}});
+const PLATES=[{"id":"c-chest.jpg","lab":1,"sp":"C","title":"Cat chest, ventral view","W":1280,"H":720,"items":[{"t":"b","x":81,"y":94,"w":165,"h":25,"a":"Clavodeltoid","alts":["clavobrachialis","clavodeltoideus"]},{"t":"b","x":143,"y":254,"w":140,"h":30,"a":"Epitrochlearis","alts":[]},{"t":"b","x":859,"y":257,"w":163,"h":30,"a":"Pectoralis major","alts":[]},{"t":"b","x":314,"y":298,"w":204,"h":25,"a":"Pectoantebrachialis","alts":[]},{"t":"b","x":851,"y":369,"w":164,"h":25,"a":"Pectoralis minor","alts":[]},{"t":"b","x":869,"y":527,"w":173,"h":25,"a":"Latissimus dorsi","alts":[]},{"t":"b","x":294,"y":520,"w":154,"h":32,"a":"Xiphihumeralis","alts":[]}]},{"id":"c-arm-ven.jpg","lab":1,"sp":"C","title":"Cat forelimb, medial view","W":1280,"H":720,"items":[{"t":"b","x":416,"y":25,"w":173,"h":30,"a":"Pectoralis major","alts":[]},{"t":"b","x":412,"y":105,"w":155,"h":25,"a":"Clavodeltoid","alts":["clavobrachialis","clavodeltoideus"]},{"t":"b","x":427,"y":192,"w":194,"h":25,"a":"Pectoantebrachialis","alts":[]},{"t":"b","x":1074,"y":279,"w":140,"h":30,"a":"Epitrochlearis","alts":["epitrochelaris"]},{"t":"b","x":1036,"y":435,"w":125,"h":83,"a":"Triceps brachii (long head)","alts":["triceps brachii","triceps","long head triceps"]}]},{"id":"c-arm-lat.jpg","lab":1,"sp":"C","title":"Cat forelimb, lateral view","W":1280,"H":720,"items":[{"t":"b","x":698,"y":52,"w":165,"h":25,"a":"Clavodeltoid","alts":["clavobrachialis","clavodeltoideus"]},{"t":"b","x":675,"y":126,"w":154,"h":25,"a":"Acromiodeltoid","alts":[]},{"t":"b","x":24,"y":249,"w":126,"h":30,"a":"Spinodeltoid","alts":[]},{"t":"b","x":182,"y":421,"w":153,"h":59,"a":"Triceps brachii (long head)","alts":["triceps brachii","triceps","long head triceps"]},{"t":"b","x":203,"y":498,"w":145,"h":58,"a":"Triceps brachii (lateral head)","alts":["triceps brachii","triceps","lateral head triceps"]}]},{"id":"Gray410.png","lab":1,"sp":"H","title":"Human chest and arm, superficial","W":531,"H":650,"items":[{"t":"s","cx":345.0,"cy":175.0,"L":122.9,"T":18,"ang":22.9,"a":"Deltoid","alts":["deltoideus"]},{"t":"s","cx":183.5,"cy":261.5,"L":167.9,"T":18,"ang":-64.9,"a":"Pectoralis major","alts":[]},{"t":"sm","cx":213.5,"cy":263.5,"L":84.7,"T":16,"ang":-63.8,"a":null,"alts":[]},{"t":"sm","cx":182.5,"cy":146.5,"L":75.9,"T":22,"ang":9.6,"a":null,"alts":[]},{"t":"s","cx":396.5,"cy":418.0,"L":77.5,"T":34,"ang":6.8,"a":"Biceps brachii","alts":["biceps"]}]},{"id":"Gray411.png","lab":1,"sp":"H","title":"Human chest and arm, deep","W":550,"H":533,"items":[{"t":"s","cx":197.5,"cy":184.0,"L":72.7,"T":14,"ang":56.1,"a":"Pectoralis minor","alts":[]},{"t":"sm","cx":185.5,"cy":215.0,"L":48.9,"T":12,"ang":60.8,"a":null,"alts":[]},{"t":"s","cx":254.5,"cy":262.0,"L":85.5,"T":14,"ang":78.5,"a":"Serratus anterior","alts":["serratus ventralis"]},{"t":"sm","cx":271.5,"cy":350.0,"L":81.2,"T":13,"ang":79.5,"a":null,"alts":[]},{"t":"s","cx":405.0,"cy":284.0,"L":60.0,"T":14,"ang":0.0,"a":"Biceps brachii","alts":["biceps"]},{"t":"sm","cx":406.0,"cy":302.0,"L":58.0,"T":12,"ang":0.0,"a":null,"alts":[]}]},{"id":"Gray412.png","lab":1,"sp":"H","title":"Human shoulder and arm, posterior","W":550,"H":523,"items":[{"t":"s","cx":185.0,"cy":337.0,"L":84.0,"T":14,"ang":0.0,"a":"Triceps brachii","alts":["triceps"]},{"t":"sm","cx":173.0,"cy":358.0,"L":94.0,"T":13,"ang":0.0,"a":null,"alts":[]},{"t":"s","cx":398.0,"cy":69.0,"L":86.0,"T":13,"ang":1.5,"a":"Deltoid","alts":["deltoideus"]},{"t":"s","cx":338.5,"cy":253.0,"L":78.0,"T":20,"ang":70.2,"a":"Latissimus dorsi","alts":["lattisimus dorsi","latissimus"]}]},{"id":"c-back.jpg","lab":2,"sp":"C","title":"Cat neck, shoulder and back, lateral view","W":1280,"H":720,"items":[{"t":"b","x":302,"y":36,"w":155,"h":29,"a":"Spinotrapezius","alts":[]},{"t":"b","x":1028,"y":109,"w":149,"h":30,"a":"Clavotrapezius","alts":[]},{"t":"b","x":984,"y":246,"w":155,"h":25,"a":"Clavodeltoid","alts":["clavobrachialis","clavodeltoideus"]},{"t":"b","x":830,"y":439,"w":168,"h":25,"a":"Acromiodeltoid","alts":[]},{"t":"b","x":402,"y":478,"w":187,"h":30,"a":"Acromiotrapezius","alts":[]},{"t":"b","x":218,"y":483,"w":174,"h":25,"a":"Latissimus dorsi","alts":[]},{"t":"b","x":509,"y":525,"w":136,"h":30,"a":"Spinodeltoid","alts":[]}]},{"id":"c-abd.jpg","lab":2,"sp":"C","title":"Cat abdomen, ventral, superficial","W":1280,"H":720,"items":[{"t":"b","x":501,"y":87,"w":282,"h":30,"a":"External oblique","alts":["external abdominal oblique"]},{"t":"b","x":84,"y":587,"w":174,"h":25,"a":"Pectoralis minor","alts":[]},{"t":"b","x":272,"y":585,"w":156,"h":32,"a":"Xiphihumeralis","alts":[]}]},{"id":"c-abd-int.jpg","lab":2,"sp":"C","title":"Cat abdomen, external oblique reflected","W":1280,"H":720,"items":[{"t":"b","x":506,"y":128,"w":203,"h":59,"a":"External oblique","alts":["external abdominal oblique"]},{"t":"b","x":807,"y":168,"w":197,"h":59,"a":"Internal oblique","alts":["internal abdominal oblique"]},{"t":"b","x":945,"y":593,"w":114,"h":53,"a":"Rectus abdominis","alts":["rectus abdominus"]},{"t":"b","x":486,"y":606,"w":118,"h":55,"a":"Transversus abdominis","alts":["transversus abdominus","transverse abdominis"]}]},{"id":"c-abd-leg.jpg","lab":2,"sp":"C","title":"Cat abdomen and hindlimb, ventral","W":1280,"H":720,"items":[{"t":"b","x":775,"y":44,"w":90,"h":24,"a":"Sartorius","alts":[]},{"t":"b","x":163,"y":131,"w":118,"h":55,"a":"Transversus abdominis","alts":["transversus abdominus","transverse abdominis"]},{"t":"b","x":587,"y":146,"w":203,"h":59,"a":"External oblique","alts":["external abdominal oblique"]},{"t":"b","x":307,"y":177,"w":275,"h":30,"a":"Internal oblique","alts":["internal abdominal oblique"]},{"t":"b","x":962,"y":446,"w":158,"h":25,"a":"Semitendinosus","alts":[]},{"t":"b","x":963,"y":564,"w":90,"h":25,"a":"Gracilis","alts":[]},{"t":"b","x":217,"y":612,"w":114,"h":53,"a":"Rectus abdominis","alts":["rectus abdominus"]}]},{"id":"Gray409.png","lab":2,"sp":"H","title":"Human back, superficial","W":733,"H":1156,"items":[{"t":"s","cx":313.0,"cy":381.0,"L":254.2,"T":22,"ang":63.2,"a":"Trapezius","alts":[]},{"t":"s","cx":76.0,"cy":365.0,"L":129.3,"T":22,"ang":55.2,"a":"Deltoid","alts":["deltoideus"]},{"t":"s","cx":469.0,"cy":341.0,"L":161.6,"T":20,"ang":53.6,"a":"Rhomboid minor","alts":["rhomboid","rhomboids","rhomboideus minor"]},{"t":"s","cx":479.0,"cy":410.5,"L":135.5,"T":20,"ang":49.2,"a":"Rhomboid major","alts":["rhomboid","rhomboids","rhomboideus major"]},{"t":"sm","cx":464.0,"cy":429.0,"L":72.5,"T":16,"ang":50.2,"a":null,"alts":[]},{"t":"s","cx":304.5,"cy":726.5,"L":278.4,"T":22,"ang":67.0,"a":"Latissimus dorsi","alts":["lattisimus dorsi","latissimus"]},{"t":"sm","cx":259.0,"cy":765.0,"L":117.4,"T":20,"ang":61.0,"a":null,"alts":[]}]},{"id":"Gray392.png","lab":2,"sp":"H","title":"Human abdominal wall, external oblique","W":519,"H":650,"items":[{"t":"s","cx":284.0,"cy":291.0,"L":110.0,"T":14,"ang":0.0,"a":"External oblique","alts":["obliquus externus","external abdominal oblique"]},{"t":"sm","cx":289.5,"cy":364.0,"L":121.0,"T":14,"ang":0.0,"a":null,"alts":[]},{"t":"s","cx":435.5,"cy":164.5,"L":263.2,"T":16,"ang":-73.7,"a":"Latissimus dorsi","alts":["latissimus"]},{"t":"s","cx":262.5,"cy":69.5,"L":179.5,"T":14,"ang":-18.2,"a":"Pectoralis major","alts":[]},{"t":"s","cx":355.0,"cy":146.5,"L":114.2,"T":14,"ang":49.3,"a":"Serratus anterior","alts":[]}]},{"id":"Gray395.png","lab":2,"sp":"H","title":"Human abdominal wall, internal oblique","W":483,"H":600,"items":[{"t":"s","cx":264.0,"cy":270.0,"L":164.0,"T":14,"ang":0.0,"a":"Internal oblique","alts":["obliquus internus","internal abdominal oblique"]}]},{"id":"Gray397.png","lab":2,"sp":"H","title":"Human abdominal wall, deepest layer","W":462,"H":700,"items":[{"t":"s","cx":270.5,"cy":420.0,"L":143.0,"T":14,"ang":0.0,"a":"Transversus abdominis","alts":["transversus abdominus","transverse abdominis"]},{"t":"s","cx":89.0,"cy":315.0,"L":390.0,"T":14,"ang":90.0,"a":"Rectus abdominis","alts":["rectus abdominus"]},{"t":"sm","cx":146.0,"cy":335.0,"L":330.0,"T":14,"ang":90.0,"a":null,"alts":[]},{"t":"sm","cx":156.0,"cy":527.0,"L":42.0,"T":12,"ang":0.0,"a":null,"alts":[]}]},{"id":"c-leg-ven.jpg","lab":3,"sp":"C","title":"Cat hindlimb, medial, superficial","W":1280,"H":720,"items":[{"t":"b","x":260,"y":112,"w":100,"h":25,"a":"Sartorius","alts":[]},{"t":"b","x":832,"y":454,"w":159,"h":25,"a":"Gastrocnemius","alts":[]},{"t":"b","x":766,"y":538,"w":164,"h":25,"a":"Semitendinosus","alts":[]},{"t":"b","x":664,"y":541,"w":90,"h":25,"a":"Gracilis","alts":[]}]},{"id":"c-leg-deep.jpg","lab":3,"sp":"C","title":"Cat hindlimb, medial, gracilis reflected","W":1280,"H":720,"items":[{"t":"b","x":210,"y":121,"w":209,"h":29,"a":"Sartorius","alts":[]},{"t":"b","x":100,"y":215,"w":223,"h":36,"a":"Vastus medialis","alts":[]},{"t":"b","x":810,"y":462,"w":164,"h":25,"a":"Semitendinosus","alts":[]},{"t":"b","x":1011,"y":474,"w":159,"h":25,"a":"Gastrocnemius","alts":[]},{"t":"b","x":815,"y":545,"w":194,"h":25,"a":"Semimembranosus","alts":[]},{"t":"b","x":920,"y":634,"w":189,"h":29,"a":"Gracilis","alts":[]}]},{"id":"c-leg-dors.jpg","lab":3,"sp":"C","title":"Cat hindlimb, lateral, superficial","W":1280,"H":720,"items":[{"t":"b","x":771,"y":160,"w":164,"h":25,"a":"Semitendinosus","alts":[]},{"t":"b","x":110,"y":243,"w":100,"h":25,"a":"Sartorius","alts":[]},{"t":"b","x":152,"y":289,"w":195,"h":25,"a":"Tensor fasciae latae","alts":["tensor fascia latae","tensor fascia latte","tfl"]},{"t":"b","x":759,"y":317,"w":159,"h":25,"a":"Gastrocnemius","alts":[]},{"t":"b","x":221,"y":413,"w":160,"h":30,"a":"Biceps femoris","alts":[]},{"t":"b","x":881,"y":647,"w":77,"h":25,"a":"Soleus","alts":[]}]},{"id":"c-leg-lat.jpg","lab":3,"sp":"C","title":"Cat hip and thigh, lateral, biceps femoris reflected","W":1280,"H":720,"items":[{"t":"b","x":44,"y":74,"w":100,"h":56,"a":"Gluteus maximus","alts":[]},{"t":"b","x":59,"y":161,"w":88,"h":56,"a":"Gluteus medius","alts":[]},{"t":"b","x":1076,"y":82,"w":117,"h":87,"a":"Biceps femoris","alts":[]},{"t":"b","x":854,"y":247,"w":164,"h":25,"a":"Semitendinosus","alts":[]},{"t":"b","x":845,"y":333,"w":187,"h":27,"a":"Semimembranosus","alts":[]},{"t":"b","x":75,"y":444,"w":90,"h":25,"a":"Sartorius","alts":[]},{"t":"b","x":244,"y":449,"w":126,"h":55,"a":"Tensor fasciae latae","alts":["tensor fascia latae","tensor fascia latte","tfl"]},{"t":"b","x":376,"y":592,"w":82,"h":54,"a":"Vastus lateralis","alts":[]},{"t":"b","x":466,"y":653,"w":176,"h":26,"a":"Adductor femoris","alts":[]},{"t":"b","x":937,"y":600,"w":67,"h":25,"a":"Soleus","alts":[]},{"t":"b","x":707,"y":648,"w":159,"h":25,"a":"Gastrocnemius","alts":[]}]},{"id":"c-leg-dors-deep.jpg","lab":3,"sp":"C","title":"Cat thigh, lateral, deeper layer","W":1280,"H":720,"items":[{"t":"b","x":1083,"y":45,"w":162,"h":63,"a":"Biceps femoris","alts":[]},{"t":"b","x":258,"y":144,"w":81,"h":82,"a":"Tensor fasciae latae","alts":["tensor fascia latae","tensor fascia latte","tfl"]},{"t":"b","x":216,"y":356,"w":109,"h":54,"a":"Adductor femoris","alts":[]},{"t":"b","x":735,"y":345,"w":185,"h":33,"a":"Semimembranosus","alts":[]},{"t":"b","x":720,"y":410,"w":152,"h":33,"a":"Semitendinosus","alts":[]},{"t":"b","x":832,"y":457,"w":151,"h":31,"a":"Gastrocnemius","alts":[]},{"t":"b","x":980,"y":495,"w":67,"h":25,"a":"Soleus","alts":[]}]},{"id":"Gray430.png","lab":3,"sp":"H","title":"Human thigh, anterior","W":354,"H":1229,"items":[{"t":"b","x":58,"y":466,"w":44,"h":98,"a":"Tensor fasciae latae","alts":["tensor fascia latae","tensor fascia latte","tfl"]},{"t":"s","cx":154.5,"cy":595.0,"L":133.3,"T":14,"ang":67.6,"a":"Sartorius","alts":[]},{"t":"b","x":203,"y":638,"w":52,"h":50,"a":"Adductor longus","alts":[]},{"t":"s","cx":271.0,"cy":645.5,"L":95.0,"T":13,"ang":88.7,"a":"Gracilis","alts":[]},{"t":"s","cx":248.0,"cy":680.0,"L":90.0,"T":10,"ang":90.0,"a":"Adductor magnus","alts":["adductor femoris"]},{"t":"b","x":110,"y":733,"w":67,"h":35,"a":"Rectus femoris","alts":[]},{"t":"s","cx":125.0,"cy":910.0,"L":143.0,"T":26,"ang":68.8,"a":"Vastus lateralis","alts":[]},{"t":"s","cx":236.0,"cy":942.0,"L":89.4,"T":28,"ang":49.1,"a":"Vastus medialis","alts":[]}]},{"id":"Gray434.png","lab":3,"sp":"H","title":"Human gluteal region and thigh, posterior","W":368,"H":1000,"items":[{"t":"s","cx":280.5,"cy":40.0,"L":103.8,"T":16,"ang":-7.4,"a":"Gluteus medius","alts":[]},{"t":"p","x":168,"y":150,"a":"Gluteus maximus (cut)","alts":["gluteus maximus"]},{"t":"b","x":188,"y":529,"w":58,"h":28,"a":"Biceps femoris","alts":[]},{"t":"s","cx":158.5,"cy":533.5,"L":145.0,"T":11,"ang":88.7,"a":"Semitendinosus","alts":[]},{"t":"s","cx":135.5,"cy":572.5,"L":129.1,"T":11,"ang":87.6,"a":"Semimembranosus","alts":[]},{"t":"s","cx":128.0,"cy":402.0,"L":68.0,"T":10,"ang":90.0,"a":"Gracilis","alts":[]},{"t":"s","cx":313.0,"cy":513.5,"L":147.4,"T":14,"ang":85.8,"a":"Vastus lateralis","alts":[]},{"t":"m","x":3,"y":756,"w":98,"h":128,"a":null,"alts":[]},{"t":"m","x":293,"y":766,"w":74,"h":72,"a":null,"alts":[]}]},{"id":"Gray438.png","lab":3,"sp":"H","title":"Human calf, posterior (gastrocnemius cut)","W":280,"H":900,"items":[{"t":"s","cx":147.5,"cy":207.0,"L":109.0,"T":11,"ang":0.0,"a":"Gastrocnemius","alts":[]},{"t":"s","cx":155.0,"cy":455.0,"L":94.0,"T":13,"ang":0.0,"a":"Soleus","alts":[]}]}];
+const NOTES={
+ "Gray434.png":"Gluteus maximus is cut away here to show the deeper muscles. Its cut edge is marked with a dot.",
+ "c-leg-lat.jpg":"The biceps femoris has been cut and folded back (reflected) to show the muscles under it.",
+ "c-leg-deep.jpg":"The sartorius and gracilis have been cut and folded back (reflected).",
+ "c-abd-int.jpg":"The external oblique has been cut and folded back (reflected) to show the internal oblique and transversus abdominis.",
+};
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+let labs=new Set([1,2,3]), sps=new Set(["C","H"]);
+const okItem=x=>labs.has(x.lab)&&(x.sp==="B"?true:sps.has(x.sp));
+const pool=()=>ITEMS.filter(okItem);
+function mkChips(box,obj,set,cast){
+  Object.entries(obj).forEach(([k,v])=>{const key=cast(k);const b=document.createElement("button");b.className="chip";b.id="chip-"+k;b.textContent=v;b.setAttribute("aria-pressed","true");
+    b.onclick=()=>{ if(set.has(key)){ if(set.size===1) return; set.delete(key);} else set.add(key); b.setAttribute("aria-pressed",set.has(key)); refresh(); };
+    box.appendChild(b);});
+}
+mkChips($("chips-lab"),LABS,labs,Number); mkChips($("chips-sp"),SP,sps,String);
+function refresh(){ newDeck(); newQ(); dFilter(); }
+
+document.querySelectorAll('[role="tab"]').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('[role="tab"]').forEach(x=>x.setAttribute("aria-selected",x===t));
+  const m=t.dataset.mode; ["diag","cards","quiz","tips"].forEach(k=>$("v-"+k).hidden=m!==k);
+  $("filters").hidden=m==="tips"; $("wrap").classList.toggle("narrow",m==="cards"||m==="quiz");
+});
+
+// ---------- diagrams ----------
+const norm=s=>s.toLowerCase().replace(/\(.*?\)/g," ").replace(/['’.,-]/g," ").replace(/\b(the|of|m|muscle|muscles)\b/g," ").replace(/\s+/g," ").trim();
+function lev(a,b){const m=a.length,n=b.length;const d=Array.from({length:m+1},(_,i)=>[i,...Array(n).fill(0)]);for(let j=1;j<=n;j++)d[0][j]=j;for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[m][n]}
+function matches(g0,it){const g=norm(g0); if(!g) return false;
+  const c=[it.a,...it.alts].map(norm); return c.some(x=>x===g||(x.length>5&&lev(x,g)<=(x.length>12?2:1)));}
+let dPlates=[],dIdx=0,dState={},dSel=null,bankOn=false;
+const qItems=p=>p.items.filter(i=>i.a);
+function dFilter(){ dPlates=PLATES.filter(p=>labs.has(p.lab)&&sps.has(p.sp)); if(dIdx>=dPlates.length) dIdx=0;
+  const sel=$("d-pick"); sel.innerHTML="";
+  dPlates.forEach((p,i)=>{const o=document.createElement("option");o.value=i;o.textContent=`${i+1}. ${p.title}`;sel.appendChild(o)});
+  sel.value=dIdx; renderPlate(); }
+function renderPlate(){
+  const p=dPlates[dIdx]; if(!p) return;
+  $("d-tag").textContent=`Lab ${p.lab} · ${SP[p.sp]}`;
+  $("d-img").src="img/"+p.id; $("d-img").alt=p.title;
+  $("plate").style.maxWidth=Math.min(Math.max(p.W,360)*1.2, p.H>p.W*1.6?520:2000)+"px";
+  $("d-note").textContent=NOTES[p.id]||""; $("d-note").hidden=!NOTES[p.id];
+  const st=dState[p.id] ||= {}; const L=$("d-layer"); L.innerHTML=""; const rows=$("d-rows"); rows.innerHTML=""; let n=0;
+  const pc=(v,b)=>v/b*100+"%";
+  p.items.forEach(it=>{
+    const el=document.createElement("div");
+    if(it.t==="m"||it.t==="b"){ Object.assign(el.style,{left:pc(it.x,p.W),top:pc(it.y,p.H),width:pc(it.w,p.W),height:pc(it.h,p.H)}); }
+    else if(it.t==="s"||it.t==="sm"){ el.classList.add("strip"); el.style.setProperty("--ang",it.ang+"deg"); Object.assign(el.style,{left:pc(it.cx,p.W),top:pc(it.cy,p.H),width:pc(it.L,p.W),height:pc(it.T,p.H)}); }
+    else Object.assign(el.style,{left:pc(it.x,p.W),top:pc(it.y,p.H)});
+    el.classList.add("mk");
+    if(!it.a){ el.classList.add("blank"); L.appendChild(el); return; }
+    n++; const k=n; it.k=k; el.dataset.k=k; if(it.t==="p") el.classList.add("pin");
+    const lab=document.createElement("span"); lab.textContent=k; if(it.t==="s") lab.style.transform=`rotate(${-it.ang}deg)`; el.appendChild(lab);
+    el.onclick=()=>selectItem(k,true); L.appendChild(el);
+    const li=document.createElement("li"); li.className="drow"; li.dataset.k=k;
+    li.innerHTML=`<span class="n">${k}</span><input id="d-in-${p.id.replace(/\W/g,'')}-${k}" autocomplete="off" spellcheck="false" placeholder="Name muscle ${k}"><button type="button">Show</button>`;
+    const inp=li.querySelector("input");
+    inp.addEventListener("focus",()=>selectItem(k,false));
+    inp.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();check(k);}});
+    li.querySelector("button").onclick=()=>{st[k]="shown";inp.value=it.a;paint();nextOpen(k);};
+    rows.appendChild(li); if(st[k]) inp.value=it.a;
+  });
+  dSel=null; paint();
+}
+const itemByK=k=>qItems(dPlates[dIdx])[k-1];
+function selectItem(k,focus){ dSel=k; document.querySelectorAll(".mk[data-k]").forEach(m=>m.classList.toggle("sel",+m.dataset.k===k));
+  if(focus){const inp=document.querySelector(`.drow[data-k="${k}"] input`); inp.focus({preventScroll:true}); inp.scrollIntoView({block:"nearest"});} }
+function check(k){ const p=dPlates[dIdx],st=dState[p.id],it=itemByK(k); const row=document.querySelector(`.drow[data-k="${k}"]`),inp=row.querySelector("input");
+  if(st[k]){nextOpen(k);return;}
+  if(matches(inp.value,it)){st[k]="ok";inp.value=it.a;paint();nextOpen(k);}
+  else{row.classList.add("wrong");setTimeout(()=>row.classList.remove("wrong"),900);} }
+function nextOpen(k){const p=dPlates[dIdx],st=dState[p.id],tot=qItems(p).length; for(let i=1;i<=tot;i++){const j=((k-1+i)%tot)+1; if(!st[j]){selectItem(j,true);return;}}}
+function paint(){ const p=dPlates[dIdx],st=dState[p.id]||{},tot=qItems(p).length; let ok=0,sh=0;
+  document.querySelectorAll(".drow").forEach(r=>{const k=+r.dataset.k;r.classList.toggle("ok",st[k]==="ok");r.classList.toggle("shown",st[k]==="shown");r.querySelector("input").readOnly=!!st[k];if(st[k]==="ok")ok++;if(st[k]==="shown")sh++;});
+  document.querySelectorAll(".mk[data-k]").forEach(m=>{const k=+m.dataset.k;m.classList.toggle("ok",st[k]==="ok");m.classList.toggle("shown",st[k]==="shown");});
+  $("d-prog").textContent=`${ok} named · ${sh} shown · ${tot-ok-sh} left of ${tot}`; renderBank(); }
+function renderBank(){ const box=$("d-bankbox"); box.hidden=!bankOn; if(!bankOn) return; const p=dPlates[dIdx],st=dState[p.id]||{}; box.innerHTML="";
+  [...new Set(qItems(p).map(i=>i.a))].sort().forEach(nm=>{const b=document.createElement("button");b.type="button";b.textContent=nm;
+    if(qItems(p).filter(i=>i.a===nm).every(i=>st[i.k])) b.classList.add("used");
+    b.onclick=()=>{if(!dSel)return;const inp=document.querySelector(`.drow[data-k="${dSel}"] input`);if(inp.readOnly)return;inp.value=nm;check(dSel);};box.appendChild(b);}); }
+$("d-bank").onclick=()=>{bankOn=!bankOn;$("d-bank").textContent=bankOn?"Hide word bank":"Show word bank";renderBank();};
+$("d-revall").onclick=()=>{const p=dPlates[dIdx],st=dState[p.id];qItems(p).forEach(i=>{if(!st[i.k])st[i.k]="shown"});renderPlate();};
+$("d-reset").onclick=()=>{dState[dPlates[dIdx].id]={};renderPlate();};
+$("d-pick").onchange=e=>{dIdx=+e.target.value;renderPlate();};
+$("d-prev").onclick=()=>{dIdx=(dIdx-1+dPlates.length)%dPlates.length;$("d-pick").value=dIdx;renderPlate();};
+$("d-next").onclick=()=>{dIdx=(dIdx+1)%dPlates.length;$("d-pick").value=dIdx;renderPlate();};
+
+// ---------- flashcards ----------
+let deck=[],flipped=false,reverse=false,known=0,total=0;
+const spLabel=x=>x.sp==="B"?"Cat and human":SP[x.sp]+" only";
+function newDeck(){deck=shuffle(pool());total=deck.length;known=0;flipped=false;renderCard();}
+function renderCard(){ const c=$("card"); $("c-count").textContent=`${known} known · ${deck.length} left of ${total}`;
+  if(!deck.length){c.innerHTML=`<div class="big">Deck cleared.</div><div class="tip">Reshuffle to go again, or try the station quiz.</div>`;$("c-tag").textContent="Done";return;}
+  const it=deck[0]; $("c-tag").textContent=`${LABS[it.lab]}`;
+  const facts=`<dl><dt>Where</dt><dd>${esc(it.loc)}</dd><dt>Action</dt><dd>${esc(it.act)}</dd><dt>Tip</dt><dd>${esc(it.tip)}</dd></dl>`;
+  const front=reverse?`<div class="kick">${spLabel(it)} · which muscle?</div><dl><dt>Where</dt><dd>${esc(it.loc)}</dd><dt>Action</dt><dd>${esc(it.act)}</dd></dl><div class="hint">Name it, then tap to check.</div>`
+    :`<div class="kick">${spLabel(it)}</div><div class="big">${esc(it.name)}</div><div class="hint">Where is it, and what does it do? Tap to flip.</div>`;
+  const back=`<div class="kick">${spLabel(it)}</div><div class="big">${esc(it.name)}</div>${facts}`;
+  c.innerHTML=flipped?back:front; }
+function flip(){if(!deck.length)return;flipped=!flipped;renderCard();}
+function got(){if(!deck.length)return;deck.shift();known++;flipped=false;renderCard();}
+function again(){if(!deck.length)return;const it=deck.shift();deck.splice(Math.min(deck.length,3+Math.floor(Math.random()*4)),0,it);flipped=false;renderCard();}
+$("card").onclick=flip;$("c-got").onclick=got;$("c-again").onclick=again;$("c-shuf").onclick=newDeck;
+$("c-rev").onclick=()=>{reverse=!reverse;$("c-rev").textContent=reverse?"Reverse: show name first":"Reverse: show clues first";flipped=false;renderCard();};
+document.addEventListener("keydown",e=>{if($("v-cards").hidden)return; if(e.target.tagName==="INPUT")return;
+  if(e.key===" "){e.preventDefault();flip()}else if(e.key==="ArrowRight")got();else if(e.key==="ArrowLeft")again();});
+
+// ---------- quiz ----------
+let station=1,right=0,asked=0,cur=null;const missed=new Map();
+function newQ(){ const P=pool(); if(P.length<4) return; const it=P[Math.floor(Math.random()*P.length)];
+  const kind=Math.random(); let prompt,answer,opts;
+  if(kind<0.55){ prompt=`<b>${spLabel(it)}.</b> ${esc(it.loc)}<br><br>Which muscle is pinned?`; answer=it.name;
+    const same=P.filter(x=>x.lab===it.lab&&x.id!==it.id), rest=P.filter(x=>x.id!==it.id);
+    const c=[]; for(const x of [...shuffle(same),...shuffle(rest)]){ if(c.length>=3)break; if(x.name!==answer&&!c.includes(x.name)) c.push(x.name);} opts=shuffle([answer,...c]); }
+  else if(kind<0.8){ prompt=`Which muscle does this? <b>${esc(it.act)}</b>`; answer=it.name;
+    const c=[]; for(const x of shuffle(P)){ if(c.length>=3)break; if(x.name!==answer&&x.act!==it.act&&!c.includes(x.name)) c.push(x.name);} opts=shuffle([answer,...c]); }
+  else { prompt=`Is the <b>${esc(it.name)}</b> found in the cat, the human, or both on your lab sheets?`; answer=it.sp==="B"?"Both":SP[it.sp]+" only"; opts=["Cat only","Human only","Both"]; }
+  cur={it,answer}; $("q-tag").textContent=`Station ${station}`; $("q-text").innerHTML=prompt;
+  const box=$("q-opts"); box.innerHTML="";
+  opts.forEach((o,i)=>{const b=document.createElement("button");b.className="opt";b.id="opt-"+i;b.textContent=o;b.onclick=()=>answerQ(b,o);box.appendChild(b)});
+  $("q-exp").hidden=true;$("q-next").hidden=true;renderScore(); }
+function answerQ(btn,o){asked++;const ok=o===cur.answer;if(ok)right++;else missed.set(cur.it.id,cur.it);
+  document.querySelectorAll(".opt").forEach(b=>{b.disabled=true;if(b.textContent===cur.answer)b.classList.add("right")}); if(!ok)btn.classList.add("wrong");
+  const it=cur.it; $("q-exp").innerHTML=`<b>${esc(it.name)}</b> (${spLabel(it).toLowerCase()}). ${esc(it.tip)}`; $("q-exp").hidden=false;$("q-next").hidden=false;$("q-next").focus();renderScore();renderMissed();}
+function renderScore(){$("q-score").textContent=asked?`${right} / ${asked} correct · ${Math.round(100*right/asked)}%`:"No stations yet";}
+function renderMissed(){const ul=$("q-missed-list");ul.innerHTML="";[...missed.values()].forEach(it=>{const li=document.createElement("li");li.innerHTML=`<b>${esc(it.name)}</b>, ${spLabel(it).toLowerCase()}`;ul.appendChild(li)});$("q-missed").hidden=missed.size===0;}
+$("q-next").onclick=()=>{station++;newQ();};
+$("q-reset").onclick=()=>{station=1;right=0;asked=0;missed.clear();renderMissed();newQ();};
+
+refresh();
+</script>
+</body></html>
