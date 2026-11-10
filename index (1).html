@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bone Practical Drill</title>
+<style>:root{color-scheme:light dark}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head><body>
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: single centered study column; mode tabs + region chips on top, one working card below, like a pinned lab station */
+:root{
+  --bg:#eef2f1; --surface:#ffffff; --sunk:#e2e8e6; --fg:#16201d; --muted:#5b6964;
+  --accent:#0f6b5c; --accent-ink:#ffffff; --tag:#f0cf4f; --tag-ink:#2a2306;
+  --ok:#2f7d4a; --ok-bg:#e1f1e6; --bad:#b3412f; --bad-bg:#f7e3df; --line:#cfd8d5;
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible",ui-sans-serif,system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1412; --surface:#182120; --sunk:#202a28; --fg:#e4ebe8; --muted:#97a6a1;
+  --accent:#4fbfa8; --accent-ink:#06211b; --tag:#d9b73c; --tag-ink:#231c03;
+  --ok:#6cc58b; --ok-bg:#1c3326; --bad:#ec8a77; --bad-bg:#3a201b; --line:#2c3836; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1412; --surface:#182120; --sunk:#202a28; --fg:#e4ebe8; --muted:#97a6a1;
+  --accent:#4fbfa8; --accent-ink:#06211b; --tag:#d9b73c; --tag-ink:#231c03;
+  --ok:#6cc58b; --ok-bg:#1c3326; --bad:#ec8a77; --bad-bg:#3a201b; --line:#2c3836; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.5}
+.wrap{max-width:760px;margin:0 auto;padding:28px 16px 64px;display:flex;flex-direction:column;gap:20px}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,6vw,40px);line-height:1.05;margin:0;letter-spacing:-.01em;text-wrap:balance}
+.sub{color:var(--muted);margin:6px 0 0}
+.tabs{display:flex;gap:6px;background:var(--sunk);padding:4px;border-radius:10px;width:fit-content;max-width:100%;flex-wrap:wrap}
+.tabs button{border:0;background:transparent;color:var(--muted);font:700 15px var(--body);padding:8px 14px;border-radius:7px;cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--surface);color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chips .lbl{font:500 12px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-right:4px}
+.chip{border:1.5px solid var(--line);background:transparent;color:var(--muted);font:700 14px var(--body);padding:6px 12px;border-radius:999px;cursor:pointer}
+.chip[aria-pressed="true"]{border-color:var(--accent);color:var(--fg);background:color-mix(in srgb,var(--accent) 14%,transparent)}
+button:focus-visible,.card:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:16px}
+.meta{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font:500 13px var(--mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.tag{display:inline-flex;align-items:center;gap:8px;background:var(--tag);color:var(--tag-ink);font:500 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;padding:4px 10px 4px 8px;border-radius:4px;width:fit-content}
+.tag::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--tag-ink)}
+.card{min-height:230px;border:1.5px dashed var(--line);border-radius:12px;padding:24px;display:flex;flex-direction:column;justify-content:center;gap:10px;cursor:pointer;background:var(--bg)}
+.card .big{font-family:var(--display);font-weight:800;font-size:clamp(24px,5vw,34px);line-height:1.1;text-wrap:balance}
+.card .bone{font:500 13px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.card .tip{font-size:17px;max-width:60ch}
+.card .hint{font-size:13px;color:var(--muted)}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.btn{border:0;border-radius:9px;font:700 15px var(--body);padding:11px 16px;cursor:pointer;background:var(--sunk);color:var(--fg)}
+.btn.primary{background:var(--accent);color:var(--accent-ink)}
+.btn.ok{background:var(--ok-bg);color:var(--ok)}
+.btn.bad{background:var(--bad-bg);color:var(--bad)}
+.btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--muted)}
+.q{font-size:18px;max-width:60ch}
+.q b{font-family:var(--display);font-weight:800}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:520px){.opts{grid-template-columns:1fr}}
+.opt{text-align:left;border:1.5px solid var(--line);background:var(--bg);color:var(--fg);font:700 16px var(--body);padding:13px 14px;border-radius:10px;cursor:pointer;min-width:0}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt.right{border-color:var(--ok);background:var(--ok-bg);color:var(--ok)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-bg);color:var(--bad)}
+.opt:disabled{cursor:default}
+.explain{border-left:3px solid var(--accent);padding:4px 0 4px 12px;color:var(--fg)}
+.missed{display:flex;flex-direction:column;gap:6px}
+.missed h3,.tips h3{font:500 12px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0}
+.missed li{font-size:15px}
+.missed ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+.tips{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:12px}
+.tipbox{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.tipbox h4{font-family:var(--display);font-weight:800;font-size:18px;margin:0}
+.tipbox ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px;font-size:15px}
+.kbd{font:500 12px var(--mono);color:var(--muted)}
+@media (prefers-reduced-motion:no-preference){.card{transition:background .15s}}
+.wrap.wide{max-width:1180px}
+.dhead{display:flex;gap:8px;align-items:center}
+.dhead select{flex:1;min-width:0;font:700 15px var(--body);padding:10px 12px;border-radius:9px;border:1.5px solid var(--line);background:var(--bg);color:var(--fg)}
+.dwrap{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:820px){.dwrap{grid-template-columns:1fr}}
+.plate{position:relative;background:#fff;border-radius:10px;border:1px solid var(--line);overflow:hidden;line-height:0}
+.plate img{width:100%;height:auto;display:block}
+#d-layer{position:absolute;inset:0}
+.mk{position:absolute;border:1.5px solid #3a3205;background:#f3d35a;color:#2a2306;font:700 11px/1 var(--mono);display:flex;align-items:flex-start;justify-content:flex-start;padding:2px 3px;cursor:pointer;border-radius:3px;box-sizing:border-box;overflow:hidden}
+.mk.blank{background:#e9ece9;border:0;cursor:default}
+.mk.pin{width:22px;height:22px;border-radius:50%;transform:translate(-50%,-50%);align-items:center;justify-content:center;padding:0;box-shadow:0 0 0 2px #fff}
+.mk.sel{outline:3px solid #0f6b5c;outline-offset:1px;z-index:2}
+.mk.ok{background:#bfe6c9;border-color:#2f7d4a;color:#1d4f2e}
+.mk.shown{background:#f4cfc6;border-color:#b3412f;color:#5a1d12}
+.dlist{display:flex;flex-direction:column;gap:12px;min-width:0}
+.dlist ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.drow{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:8px;align-items:center}
+.drow .n{font:700 13px var(--mono);color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+.drow input{width:100%;min-width:0;font:400 15px var(--body);padding:8px 10px;border-radius:8px;border:1.5px solid var(--line);background:var(--bg);color:var(--fg)}
+.drow input:focus{outline:none;border-color:var(--accent)}
+.drow.ok input{border-color:var(--ok);background:var(--ok-bg);color:var(--ok);font-weight:700}
+.drow.shown input{border-color:var(--bad);background:var(--bad-bg);color:var(--bad);font-weight:700}
+.drow.wrong input{border-color:var(--bad)}
+.drow button{border:0;background:transparent;color:var(--muted);font:700 13px var(--body);cursor:pointer;padding:6px}
+.bank{display:flex;flex-wrap:wrap;gap:6px}
+.bank button{border:1.5px solid var(--line);background:var(--bg);color:var(--fg);font:400 13px var(--body);padding:5px 9px;border-radius:999px;cursor:pointer}
+.bank button.used{opacity:.35}
+.credit{font-size:13px;color:var(--muted);margin:0}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Bone Practical Drill</h1>
+    <p class="sub">A&amp;P 1 skeleton: bones and bone markings. Label real anatomy plates, then drill with flashcards and a station-style quiz.</p>
+  </header>
+
+  <div class="tabs" role="tablist">
+    <button role="tab" id="t-diag" aria-selected="true" data-mode="diag">Label diagrams</button>
+    <button role="tab" id="t-cards" aria-selected="false" data-mode="cards">Flashcards</button>
+    <button role="tab" id="t-quiz" aria-selected="false" data-mode="quiz">Station quiz</button>
+    <button role="tab" id="t-tips" aria-selected="false" data-mode="tips">Practical tips</button>
+  </div>
+
+  <div class="chips" id="chips"><span class="lbl">Regions</span></div>
+
+  <section id="v-diag" class="panel">
+    <div class="meta"><span class="tag" id="d-tag">Diagram</span><span id="d-prog"></span></div>
+    <div class="dhead">
+      <button class="btn ghost" id="d-prev" aria-label="Previous diagram">&larr;</button>
+      <select id="d-pick" aria-label="Choose a diagram"></select>
+      <button class="btn ghost" id="d-next" aria-label="Next diagram">&rarr;</button>
+    </div>
+    <div class="dwrap">
+      <div class="plate" id="plate"><img id="d-img" alt=""><div id="d-layer"></div></div>
+      <div class="dlist">
+        <div class="row">
+          <button class="btn ghost" id="d-bank">Show word bank</button>
+          <button class="btn ghost" id="d-revall">Reveal all</button>
+          <button class="btn ghost" id="d-reset">Clear</button>
+        </div>
+        <div class="bank" id="d-bankbox" hidden></div>
+        <ol id="d-rows"></ol>
+      </div>
+    </div>
+    <p class="credit">Tap a numbered box or dot, type the name, press Enter. Spelling within a letter or two counts. Plates: Henry Gray, <i>Anatomy of the Human Body</i> (1918), drawings by H. V. Carter, public domain via Wikimedia Commons.</p>
+  </section>
+
+  <section id="v-cards" class="panel" hidden>
+    <div class="meta"><span class="tag" id="c-tag">Card</span><span id="c-count"></span></div>
+    <div class="card" id="card" tabindex="0" role="button" aria-label="Flip card"></div>
+    <div class="row">
+      <button class="btn bad" id="c-again">Again</button>
+      <button class="btn ok" id="c-got">Got it</button>
+      <button class="btn ghost" id="c-rev">Reverse: show clue first</button>
+      <button class="btn ghost" id="c-shuf">Reshuffle</button>
+    </div>
+    <span class="kbd">Space flips. Right arrow = got it. Left arrow = again.</span>
+  </section>
+
+  <section id="v-quiz" class="panel" hidden>
+    <div class="meta"><span class="tag" id="q-tag">Station 1</span><span id="q-score"></span></div>
+    <div class="q" id="q-text"></div>
+    <div class="opts" id="q-opts"></div>
+    <div class="explain" id="q-exp" hidden></div>
+    <div class="row"><button class="btn primary" id="q-next" hidden>Next station</button><button class="btn ghost" id="q-reset">Reset score</button></div>
+    <div class="missed" id="q-missed" hidden><h3>Missed this session</h3><ul id="q-missed-list"></ul></div>
+  </section>
+
+  <section id="v-tips" hidden>
+    <div class="tips">
+      <div class="tipbox"><h4>Telling left from right</h4><ul>
+        <li>Humerus: head points medial, greater tubercle is lateral, olecranon fossa is posterior.</li>
+        <li>Femur: head points medial, linea aspera is posterior, patellar surface is anterior.</li>
+        <li>Scapula: glenoid cavity faces lateral, spine is on the back, coracoid points forward.</li>
+        <li>Tibia: medial malleolus is medial, tibial tuberosity faces anterior.</li>
+        <li>Fibula: the lateral malleolus's smooth joint facet faces medial toward the talus.</li>
+        <li>Clavicle: flat end goes lateral, the rough tubercle and grooves are on the underside.</li>
+        <li>Os coxae: acetabulum faces lateral, pubis is anterior, iliac crest is up.</li>
+      </ul></div>
+      <div class="tipbox"><h4>Same name, different bone</h4><ul>
+        <li>Coronoid process: mandible (front of ramus) and ulna (below trochlear notch).</li>
+        <li>Coronoid fossa: humerus, anterior, catches the ulna's coronoid process.</li>
+        <li>Styloid process: temporal, radius, and ulna.</li>
+        <li>Auricular surface: sacrum and ilium, the two sides of the SI joint.</li>
+        <li>Head: humerus, radius, ulna (distal!), femur, fibula, rib.</li>
+        <li>Condyles: occipital, mandible, femur, tibia.</li>
+      </ul></div>
+      <div class="tipbox"><h4>Which vertebra is it?</h4><ul>
+        <li>Holes in the transverse processes: cervical.</li>
+        <li>No body, just a ring: atlas (C1).</li>
+        <li>Tooth sticking up: axis (C2).</li>
+        <li>Rib facets on the body, long downward spinous process: thoracic.</li>
+        <li>Huge kidney-shaped body, short square spinous process: lumbar.</li>
+      </ul></div>
+      <div class="tipbox"><h4>Mnemonics</h4><ul>
+        <li>Carpals, proximal row lateral to medial, then distal row: Some Lovers Try Positions That They Can't Handle (scaphoid, lunate, triquetrum, pisiform, trapezium, trapezoid, capitate, hamate).</li>
+        <li>Trapezium sits under the thumb: "the thumb is the M."</li>
+        <li>Tarsals: Tiger Cubs Need MILC (talus, calcaneus, navicular, medial, intermediate, lateral cuneiforms, cuboid).</li>
+        <li>Sphenoid foramina front to back: rotundum, ovale, spinosum (R-O-S, small to big then tiny).</li>
+      </ul></div>
+      <div class="tipbox"><h4>Station habits</h4><ul>
+        <li>First ask which bone you're looking at, then find the pin. Narrows it fast.</li>
+        <li>Check if the pin is on a hole, a bump, a groove, or a smooth surface. The word usually follows (foramen, process or tubercle, sulcus, facet).</li>
+        <li>Write the full name and spell it right. "Process" vs "tuberosity" matters.</li>
+        <li>If the question asks for side, say left or right.</li>
+      </ul></div>
+    </div>
+  </section>
+</div>
+
+<script>
+const RAW = `
+S|Frontal|Frontal bone|Forehead bone; forms the roof of the orbits and front of the cranium.|w
+S|Frontal|Supraorbital foramen|Small hole or notch on the upper rim of each eye socket.
+S|Frontal|Supraorbital margin|Thick upper rim of the eye socket.
+S|Parietal|Parietal bone|Paired bones forming most of the top and sides of the cranium, between the coronal and lambdoid sutures.|w
+S|Temporal|Temporal bone|Side of the skull around the ear; houses the ear canal.|w
+S|Temporal|External acoustic meatus|Ear canal opening on the side of the skull.
+S|Temporal|Mastoid process|Rounded bump just behind the ear canal; you can feel it behind your own ear.
+S|Temporal|Styloid process|Thin, pencil-like spike pointing down below the ear canal; often broken off on lab skulls.
+S|Temporal|Zygomatic process|Arm reaching forward from the side of the skull to form the back half of the cheekbone arch.
+S|Temporal|Mandibular fossa|Shallow socket just in front of the ear canal where the jaw's condyle sits (TMJ).
+S|Temporal|Carotid canal|Round hole on the underside of the skull, medial to the styloid; carries the internal carotid artery.
+S|Temporal|Internal acoustic meatus|Hole on the inner side of the petrous ridge inside the cranial cavity; CN VII and VIII.
+S|Temporal|Petrous part|Dense ridge on the cranial floor separating the middle and posterior cranial fossae.
+S|Temporal + occipital|Jugular foramen|Irregular opening on the underside, just behind the carotid canal; internal jugular vein and CN IX, X, XI.|w
+S|Occipital|Occipital bone|Back and base of the skull; contains the largest hole in the skull.|w
+S|Occipital|Foramen magnum|Largest hole in the skull; spinal cord passes through.
+S|Occipital|Occipital condyles|Two rocker-shaped smooth knobs beside the big opening at the skull base; sit on the atlas.
+S|Occipital|External occipital protuberance|Midline bump on the back of the head.
+S|Sphenoid|Sphenoid bone|Bat-shaped bone across the middle of the cranial floor; visible on the side of the skull in front of the temporal bone.|w
+S|Sphenoid|Sella turcica|Saddle-shaped seat in the center of the cranial floor; holds the pituitary gland.
+S|Sphenoid|Greater wing|Large lateral wing; seen on the side of the skull and lateral back wall of the orbit.
+S|Sphenoid|Lesser wing|Small anterior wing in the cranial floor, forming the ledge above the slit at the back of the orbit.
+S|Sphenoid|Optic canal|Small round hole at the very back of the orbit; optic nerve (CN II).
+S|Sphenoid|Superior orbital fissure|Slit at the back of the orbit, lateral to the small round optic hole; CN III, IV, V1, VI.
+S|Sphenoid|Foramen rotundum|First of the three paired holes behind the orbit on the cranial floor; round; CN V2.
+S|Sphenoid|Foramen ovale|Second of the three paired holes; the big oval one; CN V3.
+S|Sphenoid|Foramen spinosum|Tiny hole just behind the oval one; middle meningeal artery.
+S|Sphenoid|Pterygoid processes|Plates hanging down behind the maxilla, seen from the inferior view.
+S|Sphenoid + temporal + occipital|Foramen lacerum|Jagged hole beside the saddle; filled with cartilage in life.|w
+S|Ethmoid|Ethmoid bone|Light, spongy bone between the orbits forming the roof and walls of the upper nasal cavity.|w
+S|Ethmoid|Crista galli|Rooster-comb spike sticking up in the midline of the anterior cranial floor.
+S|Ethmoid|Cribriform plate|Sieve-like plate with tiny holes on either side of the rooster-comb spike; olfactory nerves.
+S|Ethmoid|Perpendicular plate|Upper part of the bony nasal septum.
+S|Ethmoid|Middle nasal concha|Scroll-like shelf on the lateral nasal wall, above the lowest scroll bone.
+S|Nasal|Nasal bones|Two small bones forming the bridge of the nose.|w
+S|Maxilla|Maxilla|Upper jaw; holds the upper teeth and forms most of the hard palate.|w
+S|Maxilla|Infraorbital foramen|Hole just below the eye socket on the upper jaw.
+S|Maxilla|Palatine process|Front two-thirds of the hard palate.
+S|Maxilla|Alveolar process|Ridge with sockets for the upper teeth.
+S|Zygomatic|Zygomatic bone|Cheekbone; forms the lateral orbit and front of the cheek arch.|w
+S|Lacrimal|Lacrimal bone|Fingernail-sized bone in the medial wall of the orbit with a groove for the tear sac.|w
+S|Palatine|Palatine bone|Back third of the hard palate.|w
+S|Vomer|Vomer|Plow-shaped bone forming the lower part of the nasal septum.|w
+S|Inferior nasal concha|Inferior nasal concha|Separate scroll bone; the lowest shelf on the lateral nasal wall.|w
+S|Mandible|Mandible|Lower jaw; the only movable skull bone.|w
+S|Mandible|Ramus|Vertical part of the lower jaw on each side.
+S|Mandible|Condylar process|Rounded knob at the back top of the ramus; fits the socket in front of the ear.
+S|Mandible|Coronoid process|Pointed projection at the front top of the ramus; temporalis attaches.
+S|Mandible|Mandibular notch|U-shaped dip between the two processes at the top of the ramus.
+S|Mandible|Angle of mandible|Corner where the body of the jaw turns up into the ramus.
+S|Mandible|Mental foramen|Hole on the outer chin area, below the premolars.
+S|Mandible|Mandibular foramen|Hole on the inner surface of the ramus; where dentists numb the lower teeth.
+S|Suture|Coronal suture|Joint between the frontal and parietal bones; runs ear to ear like a headband.|w
+S|Suture|Sagittal suture|Midline joint between the two parietal bones.|w
+S|Suture|Lambdoid suture|Upside-down V at the back, between the parietals and occipital.|w
+S|Suture|Squamous suture|Curved joint on the side above the ear, between temporal and parietal.|w
+S|Hyoid|Hyoid bone|U-shaped bone in the neck that doesn't articulate with any other bone.|w
+A|Vertebra|Body|Thick weight-bearing drum on the front of a vertebra.
+A|Vertebra|Vertebral foramen|Large central hole for the spinal cord.
+A|Vertebra|Pedicle|Short stalk connecting the body to the arch on each side.
+A|Vertebra|Lamina|Flat plate forming the roof of the arch, between the transverse and spinous processes.
+A|Vertebra|Spinous process|Single projection pointing back in the midline.
+A|Vertebra|Transverse process|Projection pointing out to each side.
+A|Vertebra|Superior articular process|Paired projection on top of the arch whose facet meets the vertebra above.
+A|Vertebra|Inferior articular process|Paired projection on the bottom of the arch whose facet meets the vertebra below.
+A|Cervical vertebra|Transverse foramen|Hole through each transverse process; vertebral artery. Only found in one spinal region.
+A|Cervical vertebra|Bifid spinous process|Spinous process split into two tips (C2 to C6).
+A|Atlas (C1)|Atlas|Ring-shaped vertebra with no body and no spinous process; big upper facets hold the skull.|w
+A|Axis (C2)|Dens|Tooth-like peg pointing up into the ring above it.
+A|Thoracic vertebra|Costal facets|Smooth spots on the body and transverse processes where ribs attach.
+A|Lumbar vertebra|Lumbar vertebra|Biggest kidney-shaped body, short square spinous process, no rib facets or transverse holes.|w
+A|Sacrum|Sacrum|Triangle of five fused vertebrae at the back of the pelvis.|w
+A|Sacrum|Sacral promontory|Anterior lip on the top of S1's body.
+A|Sacrum|Sacral foramina|Four pairs of holes on the front and back of the fused triangle.
+A|Sacrum|Auricular surface|Ear-shaped rough area on each side; forms the SI joint.
+A|Sacrum|Median sacral crest|Bumpy midline ridge on the back, made of fused spinous processes.
+A|Sacrum|Sacral hiatus|Opening at the bottom of the sacral canal on the back.
+A|Coccyx|Coccyx|Tailbone; small fused vertebrae below the sacrum.|w
+A|Rib|Head of rib|Back end of a rib that meets the vertebral bodies.
+A|Rib|Neck of rib|Short narrow part just past the head.
+A|Rib|Tubercle of rib|Bump past the neck that meets the transverse process.
+A|Rib|Costal groove|Groove on the inferior inner edge of the shaft; intercostal nerve and vessels.
+A|Rib|True ribs|Ribs 1 to 7; attach directly to the sternum by their own cartilage.|w
+A|Rib|False ribs|Ribs 8 to 12; no direct cartilage connection to the sternum.|w
+A|Rib|Floating ribs|Ribs 11 and 12; no anterior attachment at all.|w
+A|Sternum|Manubrium|Top piece of the breastbone; clavicles attach here.
+A|Sternum|Jugular notch|Dip at the top center of the breastbone, between the clavicles.
+A|Sternum|Clavicular notch|Small notch on each side of the top piece where the collarbone joins.
+A|Sternum|Sternal angle|Ridge where the top piece meets the body; rib 2 attaches here.
+A|Sternum|Body of sternum|Long middle part of the breastbone.
+A|Sternum|Xiphoid process|Small pointed tip at the bottom of the breastbone.
+U|Clavicle|Clavicle|S-shaped collarbone.|w
+U|Clavicle|Sternal end|Blunt, rounded medial end.
+U|Clavicle|Acromial end|Flat lateral end that meets the scapula.
+U|Scapula|Spine of scapula|Ridge across the back of the shoulder blade.
+U|Scapula|Acromion|Flat tip at the lateral end of the posterior ridge; the point of the shoulder.
+U|Scapula|Coracoid process|Hooked finger-like projection pointing forward, above the joint socket.
+U|Scapula|Glenoid cavity|Shallow socket on the lateral side where the humerus head sits.
+U|Scapula|Supraspinous fossa|Depression on the back above the ridge.
+U|Scapula|Infraspinous fossa|Large depression on the back below the ridge.
+U|Scapula|Subscapular fossa|Broad concave anterior surface facing the ribs.
+U|Scapula|Medial border|Edge closest to the spine.
+U|Scapula|Lateral border|Thick edge running down from the socket toward the armpit.
+U|Scapula|Superior angle|Top medial corner.
+U|Scapula|Inferior angle|Bottom tip of the triangle.
+U|Humerus|Head of humerus|Smooth half-ball at the top that faces medially into the socket.
+U|Humerus|Anatomical neck|Slight groove right at the edge of the smooth ball.
+U|Humerus|Surgical neck|Narrowing below the two bumps at the top; common fracture site.
+U|Humerus|Greater tubercle|Large lateral bump at the top.
+U|Humerus|Lesser tubercle|Smaller anterior bump at the top.
+U|Humerus|Intertubercular sulcus|Groove between the two top bumps; biceps tendon runs here.
+U|Humerus|Deltoid tuberosity|Rough area about halfway down the lateral shaft.
+U|Humerus|Capitulum|Rounded knob on the lateral distal end; meets the radius.
+U|Humerus|Trochlea|Spool-shaped surface on the medial distal end; meets the ulna.
+U|Humerus|Medial epicondyle|Large bump on the medial distal end; the "funny bone" side.
+U|Humerus|Lateral epicondyle|Smaller bump on the lateral distal end.
+U|Humerus|Olecranon fossa|Deep pit on the posterior distal end.
+U|Humerus|Coronoid fossa|Small pit on the anterior distal end, above the spool.
+U|Humerus|Radial fossa|Small pit on the anterior distal end, above the lateral knob.
+U|Radius|Head of radius|Disc-shaped top end that spins against the ulna.
+U|Radius|Radial tuberosity|Rough bump just below the neck on the medial side; biceps attaches.
+U|Radius|Styloid process|Pointed tip on the lateral (thumb side) distal end.
+U|Radius|Ulnar notch|Small concave notch on the medial distal end where the other forearm bone meets it.
+U|Ulna|Olecranon|Big hook at the top back; your elbow point.
+U|Ulna|Trochlear notch|Large C-shaped notch at the top that wraps the humerus's spool.
+U|Ulna|Coronoid process|Lip at the bottom front of the large C-shaped notch.
+U|Ulna|Radial notch|Small lateral notch near the top where the radius head turns.
+U|Ulna|Head of ulna|Small rounded distal end on the pinky side.
+U|Ulna|Styloid process|Small pointed tip on the pinky side of the distal end.
+U|Carpal|Scaphoid|Proximal row, most lateral (thumb side); boat-shaped; most commonly fractured carpal.|w
+U|Carpal|Lunate|Proximal row, second from lateral; moon-shaped.|w
+U|Carpal|Triquetrum|Proximal row, third from lateral; pyramid-shaped.|w
+U|Carpal|Pisiform|Proximal row, most medial; pea-shaped, sits on top of the third bone.|w
+U|Carpal|Trapezium|Distal row, most lateral; under the thumb metacarpal.|w
+U|Carpal|Trapezoid|Distal row, second from lateral; small wedge.|w
+U|Carpal|Capitate|Distal row, third from lateral; the largest carpal, with a rounded head.|w
+U|Carpal|Hamate|Distal row, most medial; has a hook on its palm side.|w
+U|Hand|Metacarpals|Five palm bones, numbered 1 (thumb) to 5.|w
+U|Hand|Phalanges (hand)|Finger bones: proximal, middle, distal. The thumb has no middle one.|w
+L|Os coxae|Ilium|Large upper wing of the hip bone.|w
+L|Os coxae|Ischium|Lower back part of the hip bone; what you sit on.|w
+L|Os coxae|Pubis|Front lower part of the hip bone.|w
+L|Os coxae|Iliac crest|Curved top edge of the hip; your hands rest here on your hips.
+L|Os coxae|Anterior superior iliac spine|Front end of the curved top edge; a palpable landmark (ASIS).
+L|Os coxae|Anterior inferior iliac spine|Smaller bump just below the front end of the top edge (AIIS).
+L|Os coxae|Posterior superior iliac spine|Back end of the curved top edge; the "dimples" above the buttocks (PSIS).
+L|Os coxae|Greater sciatic notch|Large deep notch on the posterior edge; sciatic nerve passes.
+L|Os coxae|Iliac fossa|Smooth concave inner surface of the upper wing.
+L|Os coxae|Acetabulum|Deep cup on the lateral side where the femur head sits.
+L|Os coxae|Obturator foramen|Largest hole in the skeleton, below the hip socket.
+L|Os coxae|Ischial tuberosity|Large rough bump at the bottom back; sitting bone.
+L|Os coxae|Ischial spine|Pointed projection between the two sciatic notches.
+L|Os coxae|Pubic symphysis|Cartilage joint where the two hip bones meet in front.|w
+L|Femur|Head of femur|Smooth ball at the top facing medially into the hip socket.
+L|Femur|Fovea capitis|Small pit in the center of the ball; ligament attachment.
+L|Femur|Neck of femur|Angled narrow part below the ball; common hip fracture site.
+L|Femur|Greater trochanter|Large lateral bump at the top.
+L|Femur|Lesser trochanter|Small posterior medial bump below the neck.
+L|Femur|Intertrochanteric line|Ridge on the anterior surface between the two top bumps.
+L|Femur|Linea aspera|Rough vertical ridge down the posterior shaft.
+L|Femur|Medial condyle|Large rounded knuckle on the medial distal end.
+L|Femur|Lateral condyle|Large rounded knuckle on the lateral distal end.
+L|Femur|Medial epicondyle|Bump on the side of the medial knuckle.
+L|Femur|Lateral epicondyle|Bump on the side of the lateral knuckle.
+L|Femur|Intercondylar fossa|Deep notch on the posterior distal end between the two knuckles; ACL and PCL.
+L|Femur|Patellar surface|Smooth groove on the anterior distal end where the kneecap glides.
+L|Patella|Patella|Kneecap; triangular, base on top and apex pointing down.|w
+L|Tibia|Medial condyle|Flat-topped medial shelf at the top of the shin bone.
+L|Tibia|Lateral condyle|Flat-topped lateral shelf at the top of the shin bone.
+L|Tibia|Intercondylar eminence|Pair of small peaks between the two top shelves.
+L|Tibia|Tibial tuberosity|Rough bump on the front, just below the knee; patellar ligament attaches.
+L|Tibia|Anterior border|Sharp shin ridge down the front.
+L|Tibia|Medial malleolus|Inner ankle bump.
+L|Fibula|Head of fibula|Knob at the top lateral, just below the knee.
+L|Fibula|Lateral malleolus|Outer ankle bump; sits lower than the inner one.
+L|Tarsal|Talus|Top tarsal; sits under the tibia and fibula and carries body weight to the foot.|w
+L|Tarsal|Calcaneus|Heel bone; largest tarsal.|w
+L|Tarsal|Navicular|Boat-shaped, medial side, in front of the talus.|w
+L|Tarsal|Medial cuneiform|Wedge in front of the navicular, in line with the big toe.|w
+L|Tarsal|Intermediate cuneiform|Middle wedge, the smallest; in line with toe 2.|w
+L|Tarsal|Lateral cuneiform|Third wedge, in line with toe 3.|w
+L|Tarsal|Cuboid|Cube-shaped, lateral side, in front of the heel; in line with toes 4 and 5.|w
+L|Foot|Metatarsals|Five long foot bones, numbered 1 (big toe) to 5.|w
+L|Foot|Phalanges (foot)|Toe bones: proximal, middle, distal. The big toe has no middle one.|w
+`;
+const REGIONS = {S:"Skull",A:"Vertebrae, ribs, sternum",U:"Upper limb",L:"Lower limb"};
+const ITEMS = RAW.trim().split("\n").map((l,i)=>{const p=l.split("|");return {id:i,r:p[0],bone:p[1],name:p[2],tip:p[3],whole:p[4]==="w"}});
+
+let on = new Set(Object.keys(REGIONS));
+const pool = () => ITEMS.filter(x=>on.has(x.r));
+const shuffle = a => {a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const $ = id => document.getElementById(id);
+const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+
+// chips
+const chips = $("chips");
+Object.entries(REGIONS).forEach(([k,v])=>{
+  const b=document.createElement("button");b.className="chip";b.id="chip-"+k;b.textContent=v;b.setAttribute("aria-pressed","true");
+  b.onclick=()=>{ if(on.has(k)){ if(on.size===1) return; on.delete(k);} else on.add(k);
+    b.setAttribute("aria-pressed",on.has(k)); newDeck(); newQ(); dFilter(); };
+  chips.appendChild(b);
+});
+
+// tabs
+document.querySelectorAll('[role="tab"]').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('[role="tab"]').forEach(x=>x.setAttribute("aria-selected",x===t));
+  const m=t.dataset.mode; $("v-diag").hidden=m!=="diag"; $("v-cards").hidden=m!=="cards"; $("v-quiz").hidden=m!=="quiz"; $("v-tips").hidden=m!=="tips";
+  chips.hidden = m==="tips";
+  document.querySelector(".wrap").classList.toggle("wide", m==="diag");
+});
+document.querySelector(".wrap").classList.add("wide");
+
+// ---------- diagrams ----------
+const PLATES = [{"id":"Gray190","r":"S","title":"Skull, anterior view","W":582,"H":600,"items":[{"t":"b","x":168,"y":142,"w":64,"h":20,"a":"Frontal bone","alts":["frontal"]},{"t":"b","x":55,"y":40,"w":62,"h":42,"a":"Coronal suture","alts":["coronal"]},{"t":"b","x":298,"y":46,"w":62,"h":58,"a":"Sagittal suture","alts":["sagittal"]},{"t":"b","x":8,"y":100,"w":34,"h":75,"a":"Parietal bone","alts":["parietal"]},{"t":"b","x":14,"y":200,"w":34,"h":70,"a":"Temporal bone","alts":["temporal"]},{"t":"b","x":98,"y":282,"w":52,"h":18,"a":"Sphenoid bone","alts":["sphenoid"]},{"t":"b","x":412,"y":226,"w":120,"h":18,"a":"Supraorbital foramen","alts":[]},{"t":"b","x":411,"y":270,"w":128,"h":15,"a":"Superior orbital fissure","alts":[]},{"t":"b","x":411,"y":283,"w":166,"h":14,"a":"Ethmoid bone (orbital plate)","alts":["ethmoid","lamina papyracea"]},{"t":"b","x":411,"y":296,"w":52,"h":14,"a":"Lacrimal bone","alts":["lacrimal"]},{"t":"b","x":411,"y":309,"w":124,"h":15,"a":"Inferior orbital fissure","alts":[]},{"t":"b","x":288,"y":333,"w":66,"h":18,"a":"Zygomatic bone","alts":["zygomatic"]},{"t":"b","x":410,"y":347,"w":115,"h":15,"a":"Infraorbital foramen","alts":[]},{"t":"b","x":410,"y":376,"w":120,"h":15,"a":"Inferior nasal concha","alts":["inferior nasal conchae"]},{"t":"b","x":184,"y":284,"w":24,"h":34,"a":"Nasal bone","alts":["nasal","nasal bones"]},{"t":"b","x":170,"y":420,"w":72,"h":20,"a":"Maxilla","alts":["maxillae","maxillary"]},{"t":"b","x":168,"y":540,"w":74,"h":18,"a":"Mandible","alts":[]},{"t":"b","x":357,"y":530,"w":93,"h":16,"a":"Mental foramen","alts":[]}]},{"id":"Gray188","r":"S","title":"Skull, lateral view","W":500,"H":463,"items":[{"t":"b","x":82,"y":78,"w":56,"h":22,"a":"Frontal bone","alts":["frontal"]},{"t":"b","x":180,"y":32,"w":58,"h":90,"a":"Coronal suture","alts":["coronal"]},{"t":"b","x":303,"y":98,"w":64,"h":20,"a":"Parietal bone","alts":["parietal"]},{"t":"b","x":236,"y":138,"w":108,"h":34,"a":"Squamous suture","alts":["squamosal suture","squamous"]},{"t":"b","x":146,"y":180,"w":84,"h":22,"a":"Sphenoid bone","alts":["sphenoid","greater wing"]},{"t":"b","x":246,"y":216,"w":62,"h":22,"a":"Temporal bone","alts":["temporal"]},{"t":"b","x":428,"y":172,"w":64,"h":115,"a":"Lambdoid suture","alts":["lambdoidal suture","lambdoid"]},{"t":"b","x":28,"y":178,"w":34,"h":18,"a":"Nasal bone","alts":["nasal"]},{"t":"b","x":77,"y":191,"w":24,"h":18,"a":"Lacrimal bone","alts":["lacrimal"]},{"t":"b","x":98,"y":191,"w":26,"h":18,"a":"Ethmoid bone","alts":["ethmoid"]},{"t":"b","x":98,"y":253,"w":64,"h":22,"a":"Zygomatic bone","alts":["zygomatic"]},{"t":"b","x":38,"y":298,"w":54,"h":20,"a":"Maxilla","alts":["maxillary"]},{"t":"b","x":138,"y":383,"w":64,"h":20,"a":"Mandible","alts":[]},{"t":"p","x":318,"y":332,"a":"Mastoid process","alts":[]},{"t":"p","x":268,"y":290,"a":"External acoustic meatus","alts":["external auditory meatus"]},{"t":"p","x":455,"y":335,"a":"Occipital bone","alts":["occipital"]}]},{"id":"Gray187","r":"S","title":"Skull, inferior view (base)","W":718,"H":1169,"items":[{"t":"b","x":350,"y":178,"w":76,"h":78,"a":"Palatine process of maxilla","alts":["palatine process"]},{"t":"b","x":344,"y":304,"w":82,"h":24,"a":"Palatine bone","alts":["palatine"]},{"t":"b","x":388,"y":418,"w":34,"h":58,"a":"Vomer","alts":[]},{"t":"b","x":178,"y":453,"w":74,"h":60,"a":"Greater wing of sphenoid","alts":["greater wing","great wing"]},{"t":"b","x":238,"y":488,"w":40,"h":40,"a":"Foramen ovale","alts":[]},{"t":"b","x":200,"y":532,"w":46,"h":38,"a":"Foramen spinosum","alts":[]},{"t":"b","x":338,"y":528,"w":24,"h":58,"a":"Foramen lacerum","alts":[]},{"t":"b","x":62,"y":498,"w":82,"h":34,"a":"Articular tubercle","alts":["articular eminence"]},{"t":"b","x":58,"y":550,"w":110,"h":46,"a":"Mandibular fossa","alts":[]},{"t":"b","x":245,"y":593,"w":32,"h":42,"a":"Carotid canal","alts":[]},{"t":"b","x":218,"y":643,"w":60,"h":42,"a":"Jugular foramen","alts":["jugular fossa"]},{"t":"m","x":468,"y":650,"w":112,"h":17},{"t":"b","x":298,"y":622,"w":76,"h":122,"a":"Occipital condyle","alts":["condyle","occipital condyles"]},{"t":"b","x":362,"y":757,"w":78,"h":42,"a":"Foramen magnum","alts":[]},{"t":"b","x":270,"y":1090,"w":176,"h":52,"a":"Occipital bone","alts":["occipital"]}]},{"id":"Gray193","r":"S","title":"Cranial floor, from above","W":719,"H":1057,"items":[{"t":"b","x":184,"y":113,"w":72,"h":16,"a":"Crista galli","alts":[]},{"t":"b","x":64,"y":176,"w":194,"h":19,"a":"Cribriform plate (olfactory foramina)","alts":["cribriform plate","cribriform","olfactory foramina"]},{"t":"b","x":353,"y":218,"w":170,"h":28,"a":"Frontal bone (orbital plate)","alts":["frontal","frontal bone","orbital plate"]},{"t":"b","x":296,"y":300,"w":138,"h":44,"a":"Lesser wing of sphenoid","alts":["lesser wing","small wing","sphenoid"]},{"t":"b","x":140,"y":330,"w":116,"h":17,"a":"Optic canal","alts":["optic foramen"]},{"t":"b","x":381,"y":331,"w":41,"h":46,"a":"Superior orbital fissure","alts":[]},{"t":"m","x":382,"y":377,"w":24,"h":17},{"t":"p","x":404,"y":398,"a":"Foramen rotundum","alts":[]},{"t":"b","x":420,"y":345,"w":58,"h":75,"a":"Greater wing of sphenoid","alts":["greater wing","great wing"]},{"t":"m","x":505,"y":316,"w":76,"h":30},{"t":"b","x":300,"y":401,"w":30,"h":58,"a":"Sella turcica","alts":["hypophyseal fossa","fossa hypophyseos"]},{"t":"m","x":427,"y":436,"w":38,"h":13},{"t":"p","x":443,"y":462,"a":"Foramen ovale","alts":[]},{"t":"m","x":466,"y":477,"w":10,"h":30},{"t":"p","x":481,"y":493,"a":"Foramen spinosum","alts":[]},{"t":"b","x":126,"y":485,"w":128,"h":18,"a":"Foramen lacerum","alts":[]},{"t":"b","x":86,"y":501,"w":170,"h":18,"a":"Carotid canal","alts":["orifice of carotid canal"]},{"t":"b","x":94,"y":566,"w":160,"h":18,"a":"Internal acoustic meatus","alts":["internal auditory meatus"]},{"t":"b","x":138,"y":609,"w":116,"h":16,"a":"Jugular foramen","alts":[]},{"t":"b","x":138,"y":622,"w":116,"h":16,"a":"Hypoglossal canal","alts":[]},{"t":"b","x":268,"y":660,"w":110,"h":50,"a":"Foramen magnum","alts":[]}]},{"id":"Gray176","r":"S","title":"Mandible, lateral view","W":600,"H":402,"items":[{"t":"b","x":341,"y":6,"w":116,"h":22,"a":"Coronoid process","alts":[]},{"t":"b","x":536,"y":8,"w":64,"h":22,"a":"Condylar process","alts":["condyle","mandibular condyle","condyloid process"]},{"t":"b","x":430,"y":52,"w":94,"h":54,"a":"Mandibular notch","alts":[]},{"t":"m","x":536,"y":68,"w":44,"h":32},{"t":"b","x":518,"y":198,"w":36,"h":80,"a":"Ramus","alts":["ramus of mandible"]},{"t":"b","x":510,"y":338,"w":60,"h":22,"a":"Angle of mandible","alts":["angle"]},{"t":"b","x":136,"y":270,"w":82,"h":38,"a":"Mental foramen","alts":[]},{"t":"b","x":228,"y":270,"w":64,"h":24,"a":"Body of mandible","alts":["body"]},{"t":"b","x":0,"y":286,"w":84,"h":46,"a":"Mental protuberance","alts":[]}]},{"id":"Gray82","r":"A","title":"Thoracic vertebra, lateral-superior view","W":450,"H":287,"items":[{"t":"b","x":198,"y":60,"w":74,"h":24,"a":"Body","alts":["vertebral body"]},{"t":"b","x":43,"y":84,"w":76,"h":22,"a":"Costal facet","alts":["costal fovea","costal facets","superior costal facet"]},{"t":"b","x":3,"y":110,"w":114,"h":30,"a":"Pedicle","alts":[]},{"t":"b","x":86,"y":236,"w":56,"h":20,"a":"Lamina","alts":[]},{"t":"b","x":285,"y":231,"w":159,"h":22,"a":"Superior articular process","alts":[]},{"t":"p","x":230,"y":262,"a":"Spinous process","alts":[]},{"t":"p","x":230,"y":150,"a":"Vertebral foramen","alts":[]}]},{"id":"Gray84","r":"A","title":"Cervical vertebra, superior view","W":500,"H":252,"items":[{"t":"b","x":28,"y":31,"w":116,"h":30,"a":"Transverse foramen","alts":["foramen transversarium"]},{"t":"b","x":203,"y":30,"w":64,"h":26,"a":"Body","alts":[]},{"t":"b","x":370,"y":25,"w":110,"h":18,"a":"Transverse process","alts":[]},{"t":"b","x":395,"y":95,"w":105,"h":27,"a":"Superior articular process","alts":[]},{"t":"b","x":395,"y":125,"w":105,"h":28,"a":"Inferior articular process","alts":[]},{"t":"b","x":272,"y":132,"w":42,"h":42,"a":"Lamina","alts":[]},{"t":"b","x":310,"y":60,"w":46,"h":28,"a":"Pedicle","alts":[]},{"t":"b","x":232,"y":224,"w":50,"h":30,"a":"Spinous process","alts":["bifid spinous process"]},{"t":"p","x":245,"y":115,"a":"Vertebral foramen","alts":[]}]},{"id":"Gray86","r":"A","title":"Atlas (C1), superior view","W":500,"H":235,"items":[{"t":"b","x":103,"y":8,"w":94,"h":20,"a":"Anterior tubercle","alts":[]},{"t":"b","x":198,"y":30,"w":66,"h":20,"a":"Anterior arch","alts":[]},{"t":"b","x":128,"y":76,"w":52,"h":86,"a":"Superior articular facet","alts":["superior articular surface","superior articular process"]},{"t":"b","x":1,"y":80,"w":62,"h":34,"a":"Transverse process","alts":[]},{"t":"b","x":423,"y":78,"w":77,"h":40,"a":"Transverse foramen","alts":["foramen transversarium"]},{"t":"b","x":193,"y":178,"w":66,"h":20,"a":"Posterior arch","alts":[]},{"t":"b","x":118,"y":213,"w":124,"h":20,"a":"Posterior tubercle","alts":[]}]},{"id":"Gray87","r":"A","title":"Axis (C2), superior view","W":400,"H":351,"items":[{"t":"b","x":136,"y":6,"w":40,"h":20,"a":"Dens","alts":["odontoid process"]},{"t":"b","x":253,"y":80,"w":122,"h":34,"a":"Superior articular facet","alts":["superior articular surface"]},{"t":"b","x":276,"y":134,"w":112,"h":34,"a":"Transverse foramen","alts":["foramen transversarium"]},{"t":"b","x":108,"y":138,"w":56,"h":24,"a":"Body","alts":[]},{"t":"b","x":86,"y":324,"w":108,"h":24,"a":"Spinous process","alts":[]}]},{"id":"Gray93","r":"A","title":"Lumbar vertebra, lateral view","W":500,"H":357,"items":[{"t":"b","x":10,"y":62,"w":104,"h":20,"a":"Transverse process","alts":[]},{"t":"b","x":383,"y":36,"w":99,"h":34,"a":"Inferior articular process","alts":[]},{"t":"b","x":50,"y":210,"w":102,"h":36,"a":"Superior articular process","alts":[]},{"t":"p","x":230,"y":300,"a":"Body","alts":["vertebral body"]}]},{"id":"Gray98","r":"A","title":"Sacrum, base (from above)","W":500,"H":333,"items":[{"t":"b","x":310,"y":23,"w":89,"h":24,"a":"Sacral canal","alts":[]},{"t":"b","x":363,"y":46,"w":116,"h":24,"a":"Superior articular process","alts":["articular process"]},{"t":"b","x":216,"y":198,"w":54,"h":24,"a":"Body (of S1)","alts":["body","sacral promontory","promontory"]},{"t":"b","x":70,"y":158,"w":36,"h":52,"a":"Ala","alts":["ala of sacrum"]}]},{"id":"Gray97","r":"A","title":"Sacrum and coccyx, lateral view","W":381,"H":600,"items":[{"t":"b","x":106,"y":8,"w":100,"h":22,"a":"Superior articular process","alts":["articular process"]},{"t":"b","x":8,"y":38,"w":109,"h":20,"a":"Median sacral crest","alts":["medial sacral crest"]},{"t":"b","x":340,"y":65,"w":36,"h":22,"a":"Body (sacral promontory)","alts":["body","promontory","sacral promontory"]},{"t":"b","x":145,"y":190,"w":104,"h":48,"a":"Auricular surface","alts":[]},{"t":"m","x":243,"y":130,"w":60,"h":76},{"t":"b","x":188,"y":466,"w":46,"h":80,"a":"Coccyx","alts":[]}]},{"id":"Gray117","r":"A","title":"Sternum, lateral view","W":337,"H":500,"items":[{"t":"b","x":193,"y":10,"w":109,"h":36,"a":"Clavicular notch","alts":["articular surface for clavicle"]},{"t":"b","x":150,"y":90,"w":82,"h":20,"a":"Manubrium","alts":[]},{"t":"b","x":14,"y":106,"w":46,"h":36,"a":"Sternal angle","alts":[]},{"t":"b","x":102,"y":232,"w":38,"h":20,"a":"Body","alts":["body of sternum","gladiolus"]},{"t":"b","x":88,"y":412,"w":104,"h":22,"a":"Xiphoid process","alts":["xiphoid"]},{"t":"p","x":165,"y":15,"a":"Jugular notch","alts":["suprasternal notch"]}]},{"id":"Gray122","r":"A","title":"Rib (typical), from below","W":464,"H":800,"items":[{"t":"b","x":174,"y":16,"w":34,"h":20,"a":"Angle of rib","alts":["angle"]},{"t":"b","x":293,"y":0,"w":170,"h":36,"a":"Tubercle of rib","alts":["tubercle"]},{"t":"b","x":366,"y":76,"w":50,"h":24,"a":"Neck of rib","alts":["neck"]},{"t":"b","x":393,"y":98,"w":34,"h":40,"a":"Head of rib","alts":["head"]},{"t":"b","x":109,"y":188,"w":72,"h":20,"a":"Costal groove","alts":[]},{"t":"b","x":86,"y":433,"w":30,"h":18,"a":"Body (shaft)","alts":["body","shaft"]}]},{"id":"Gray200","r":"U","title":"Clavicle, superior view","W":600,"H":188,"items":[{"t":"b","x":3,"y":8,"w":112,"h":24,"a":"Sternal end","alts":["sternal extremity"]},{"t":"b","x":468,"y":8,"w":128,"h":24,"a":"Acromial end","alts":["acromial extremity"]}]},{"id":"Gray203","r":"U","title":"Scapula, posterior view","W":591,"H":850,"items":[{"t":"b","x":6,"y":73,"w":30,"h":99,"a":"Acromion","alts":[]},{"t":"b","x":183,"y":51,"w":82,"h":28,"a":"Coracoid process","alts":["coracoid"]},{"t":"m","x":266,"y":76,"w":74,"h":60},{"t":"b","x":336,"y":163,"w":99,"h":32,"a":"Superior border","alts":[]},{"t":"b","x":473,"y":133,"w":74,"h":32,"a":"Superior angle","alts":["medial angle"]},{"t":"b","x":338,"y":190,"w":166,"h":36,"a":"Supraspinous fossa","alts":[]},{"t":"b","x":350,"y":398,"w":170,"h":76,"a":"Infraspinous fossa","alts":[]},{"t":"b","x":543,"y":518,"w":54,"h":244,"a":"Medial border","alts":["vertebral border"]},{"t":"b","x":223,"y":578,"w":54,"h":174,"a":"Lateral border","alts":["axillary border"]},{"t":"b","x":318,"y":803,"w":119,"h":42,"a":"Inferior angle","alts":[]},{"t":"p","x":300,"y":262,"a":"Spine of scapula","alts":["spine"]}]},{"id":"Gray202","r":"U","title":"Scapula, anterior view","W":483,"H":700,"items":[{"t":"b","x":146,"y":158,"w":110,"h":268,"a":"Subscapular fossa","alts":[]},{"t":"b","x":328,"y":183,"w":54,"h":94,"a":"Glenoid cavity","alts":["glenoid fossa"]},{"t":"p","x":265,"y":150,"a":"Coracoid process","alts":["coracoid"]},{"t":"p","x":425,"y":90,"a":"Acromion","alts":[]}]},{"id":"Gray207","r":"U","title":"Humerus, anterior view","W":653,"H":1235,"items":[{"t":"b","x":220,"y":50,"w":62,"h":54,"a":"Head of humerus","alts":["head"]},{"t":"b","x":366,"y":90,"w":48,"h":74,"a":"Greater tubercle","alts":[]},{"t":"b","x":266,"y":103,"w":58,"h":68,"a":"Lesser tubercle","alts":[]},{"t":"b","x":320,"y":138,"w":30,"h":94,"a":"Intertubercular sulcus","alts":["bicipital groove","intertubercular groove"]},{"t":"b","x":143,"y":246,"w":124,"h":26,"a":"Surgical neck","alts":[]},{"t":"b","x":250,"y":1103,"w":49,"h":34,"a":"Coronoid fossa","alts":[]},{"t":"b","x":338,"y":1098,"w":44,"h":29,"a":"Radial fossa","alts":[]},{"t":"b","x":226,"y":1140,"w":79,"h":26,"a":"Trochlea","alts":[]},{"t":"b","x":328,"y":1133,"w":54,"h":39,"a":"Capitulum","alts":[]},{"t":"b","x":156,"y":1076,"w":46,"h":114,"a":"Medial epicondyle","alts":[]},{"t":"b","x":396,"y":1090,"w":38,"h":100,"a":"Lateral epicondyle","alts":[]},{"t":"p","x":238,"y":172,"a":"Anatomical neck","alts":[]},{"t":"p","x":365,"y":560,"a":"Deltoid tuberosity","alts":[]}]},{"id":"Gray208","r":"U","title":"Humerus, posterior view (distal end)","W":256,"H":1000,"items":[{"t":"b","x":83,"y":886,"w":89,"h":39,"a":"Olecranon fossa","alts":[]},{"t":"b","x":73,"y":928,"w":79,"h":26,"a":"Trochlea","alts":[]}]},{"id":"Gray212","r":"U","title":"Ulna, proximal end, lateral view","W":251,"H":700,"items":[{"t":"b","x":25,"y":3,"w":74,"h":22,"a":"Olecranon","alts":[]},{"t":"b","x":66,"y":172,"w":72,"h":50,"a":"Trochlear notch","alts":["semilunar notch"]},{"t":"m","x":128,"y":88,"w":40,"h":92},{"t":"b","x":78,"y":226,"w":74,"h":40,"a":"Radial notch","alts":[]},{"t":"b","x":14,"y":260,"w":62,"h":32,"a":"Coronoid process","alts":[]}]},{"id":"Gray213","r":"U","title":"Radius and ulna, anterior view","W":700,"H":1245,"items":[{"t":"b","x":144,"y":46,"w":160,"h":49,"a":"Olecranon","alts":[]},{"t":"b","x":170,"y":90,"w":104,"h":50,"a":"Trochlear notch","alts":["semilunar notch"]},{"t":"b","x":178,"y":190,"w":94,"h":49,"a":"Coronoid process","alts":[]},{"t":"b","x":262,"y":198,"w":46,"h":42,"a":"Radial notch","alts":[]},{"t":"b","x":374,"y":210,"w":74,"h":26,"a":"Head of radius","alts":["head"]},{"t":"b","x":374,"y":254,"w":56,"h":24,"a":"Neck of radius","alts":["neck"]},{"t":"b","x":322,"y":196,"w":34,"h":186,"a":"Radial tuberosity","alts":[]},{"t":"b","x":151,"y":1170,"w":114,"h":24,"a":"Styloid process of ulna","alts":["styloid process"]},{"t":"b","x":404,"y":1220,"w":114,"h":24,"a":"Styloid process of radius","alts":["styloid process"]},{"t":"p","x":240,"y":1150,"a":"Head of ulna","alts":[]}]},{"id":"Gray219","r":"U","title":"Hand, palmar view","W":650,"H":831,"items":[{"t":"b","x":262,"y":22,"w":56,"h":19,"a":"Lunate","alts":[]},{"t":"b","x":340,"y":8,"w":58,"h":46,"a":"Scaphoid","alts":["navicular"]},{"t":"b","x":226,"y":53,"w":52,"h":34,"a":"Triquetrum","alts":["triangular","cuneiform"]},{"t":"b","x":205,"y":80,"w":44,"h":24,"a":"Pisiform","alts":[]},{"t":"b","x":253,"y":86,"w":42,"h":52,"a":"Hamate","alts":["unciform"]},{"t":"b","x":295,"y":118,"w":52,"h":19,"a":"Capitate","alts":["os magnum"]},{"t":"p","x":398,"y":135,"a":"Trapezium","alts":["greater multangular"]},{"t":"b","x":68,"y":66,"w":48,"h":20,"a":"Carpals","alts":["carpus","carpal bones"]},{"t":"b","x":53,"y":256,"w":74,"h":20,"a":"Metacarpals","alts":["metacarpus","metacarpal bones"]},{"t":"b","x":28,"y":443,"w":28,"h":104,"a":"Phalanges","alts":["phalanx"]}]},{"id":"Gray241","r":"L","title":"Pelvis, anterior view","W":1000,"H":808,"items":[{"t":"b","x":193,"y":68,"w":84,"h":38,"a":"Ilium","alts":[]},{"t":"b","x":483,"y":253,"w":34,"h":134,"a":"Sacrum","alts":[]},{"t":"b","x":316,"y":538,"w":79,"h":34,"a":"Pubis","alts":[]},{"t":"b","x":248,"y":668,"w":94,"h":99,"a":"Ischium","alts":[]},{"t":"b","x":453,"y":688,"w":119,"h":94,"a":"Pubic arch","alts":[]},{"t":"p","x":370,"y":650,"a":"Obturator foramen","alts":[]},{"t":"p","x":505,"y":605,"a":"Pubic symphysis","alts":[]},{"t":"p","x":150,"y":30,"a":"Iliac crest","alts":[]},{"t":"p","x":410,"y":235,"a":"Sacral foramen","alts":["sacral foramina","anterior sacral foramen"]},{"t":"p","x":880,"y":40,"a":"Iliac crest","alts":[]}]},{"id":"Gray244","r":"L","title":"Femur, anterior view","W":467,"H":1253,"items":[{"t":"b","x":308,"y":38,"w":84,"h":44,"a":"Head of femur","alts":["head"]},{"t":"b","x":381,"y":22,"w":26,"h":106,"a":"Fovea capitis","alts":[]},{"t":"b","x":228,"y":100,"w":68,"h":44,"a":"Neck of femur","alts":["neck"]},{"t":"b","x":72,"y":48,"w":70,"h":134,"a":"Greater trochanter","alts":[]},{"t":"b","x":172,"y":140,"w":92,"h":90,"a":"Intertrochanteric line","alts":[]},{"t":"b","x":38,"y":1008,"w":34,"h":144,"a":"Lateral epicondyle","alts":[]},{"t":"b","x":370,"y":1078,"w":69,"h":34,"a":"Adductor tubercle","alts":[]},{"t":"b","x":370,"y":1133,"w":76,"h":38,"a":"Medial epicondyle","alts":[]},{"t":"b","x":146,"y":1150,"w":132,"h":72,"a":"Patellar surface","alts":["patellar groove"]},{"t":"b","x":103,"y":1193,"w":94,"h":40,"a":"Lateral condyle","alts":[]},{"t":"b","x":198,"y":1188,"w":114,"h":66,"a":"Medial condyle","alts":[]},{"t":"p","x":250,"y":250,"a":"Lesser trochanter","alts":[]}]},{"id":"Gray245","r":"L","title":"Femur, posterior view","W":476,"H":1270,"items":[{"t":"b","x":48,"y":10,"w":70,"h":54,"a":"Head of femur","alts":["head"]},{"t":"b","x":250,"y":36,"w":94,"h":94,"a":"Greater trochanter","alts":[]},{"t":"b","x":144,"y":108,"w":66,"h":62,"a":"Neck of femur","alts":["neck"]},{"t":"b","x":156,"y":953,"w":119,"h":24,"a":"Popliteal surface","alts":[]},{"t":"b","x":178,"y":1106,"w":60,"h":79,"a":"Intercondylar fossa","alts":["intercondyloid fossa","intercondylar notch"]},{"t":"b","x":111,"y":1123,"w":84,"h":84,"a":"Medial condyle","alts":[]},{"t":"b","x":263,"y":1113,"w":79,"h":64,"a":"Lateral condyle","alts":[]},{"t":"b","x":371,"y":1073,"w":69,"h":36,"a":"Lateral epicondyle","alts":[]},{"t":"b","x":46,"y":1034,"w":42,"h":66,"a":"Adductor tubercle","alts":[]},{"t":"b","x":46,"y":1102,"w":42,"h":66,"a":"Medial epicondyle","alts":[]},{"t":"p","x":228,"y":600,"a":"Linea aspera","alts":[]},{"t":"p","x":173,"y":232,"a":"Lesser trochanter","alts":[]}]},{"id":"Gray258","r":"L","title":"Tibia and fibula, anterior view","W":346,"H":1000,"items":[{"t":"b","x":113,"y":96,"w":94,"h":24,"a":"Lateral condyle of tibia","alts":["lateral condyle"]},{"t":"b","x":203,"y":98,"w":94,"h":30,"a":"Medial condyle of tibia","alts":["medial condyle"]},{"t":"b","x":168,"y":56,"w":89,"h":34,"a":"Intercondylar eminence","alts":["intercondyloid eminence"]},{"t":"b","x":173,"y":133,"w":84,"h":26,"a":"Tibial tuberosity","alts":["tuberosity"]},{"t":"b","x":73,"y":240,"w":44,"h":18,"a":"Fibula","alts":[]},{"t":"b","x":276,"y":240,"w":34,"h":18,"a":"Tibia","alts":[]},{"t":"b","x":193,"y":378,"w":34,"h":232,"a":"Anterior border (crest)","alts":["anterior crest","anterior border","crest"]},{"t":"b","x":236,"y":956,"w":102,"h":22,"a":"Medial malleolus","alts":[]},{"t":"b","x":86,"y":978,"w":104,"h":24,"a":"Lateral malleolus","alts":[]},{"t":"p","x":100,"y":160,"a":"Head of fibula","alts":["head"]}]},{"id":"Gray268","r":"L","title":"Foot, dorsal view","W":638,"H":1195,"items":[{"t":"b","x":243,"y":76,"w":92,"h":36,"a":"Calcaneus","alts":["calcaneum"]},{"t":"b","x":280,"y":218,"w":56,"h":24,"a":"Talus","alts":[]},{"t":"b","x":328,"y":408,"w":94,"h":39,"a":"Navicular","alts":[]},{"t":"b","x":198,"y":370,"w":54,"h":74,"a":"Cuboid","alts":[]},{"t":"b","x":220,"y":450,"w":49,"h":84,"a":"Lateral cuneiform","alts":["third cuneiform"]},{"t":"b","x":298,"y":476,"w":54,"h":54,"a":"Intermediate cuneiform","alts":["second cuneiform","middle cuneiform"]},{"t":"b","x":341,"y":525,"w":84,"h":59,"a":"Medial cuneiform","alts":["first cuneiform"]},{"t":"b","x":486,"y":326,"w":56,"h":22,"a":"Tarsals","alts":["tarsus","tarsal bones"]},{"t":"b","x":458,"y":683,"w":84,"h":24,"a":"Metatarsals","alts":["metatarsus","metatarsal bones"]},{"t":"b","x":466,"y":963,"w":76,"h":26,"a":"Phalanges","alts":["phalanx"]}]}];
+const norm = s => s.toLowerCase().replace(/\(.*?\)/g," ").replace(/['’.,-]/g," ").replace(/\b(the|of|bone|bones)\b/g," ").replace(/\s+/g," ").trim();
+function lev(a,b){const m=a.length,n=b.length;const d=Array.from({length:m+1},(_,i)=>[i,...Array(n).fill(0)]);for(let j=1;j<=n;j++)d[0][j]=j;for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[m][n]}
+function matches(guess,it){
+  const g=norm(guess); if(!g) return false;
+  const cands=[it.a,...it.alts, it.a.replace(/\(.*?\)/g,"")].map(norm);
+  return cands.some(c=> c===g || (c.length>5 && lev(c,g)<= (c.length>12?2:1)));
+}
+let dPlates=[], dIdx=0, dState={}, dSel=null;
+function dFilter(){ dPlates=PLATES.filter(p=>on.has(p.r)); if(dIdx>=dPlates.length) dIdx=0;
+  const sel=$("d-pick"); sel.innerHTML="";
+  dPlates.forEach((p,i)=>{const o=document.createElement("option");o.value=i;o.textContent=`${i+1}. ${p.title}`;sel.appendChild(o)});
+  sel.value=dIdx; renderPlate(); }
+function quizItems(p){ return p.items.filter(it=>it.t!=="m"); }
+function renderPlate(){
+  const p=dPlates[dIdx]; if(!p) return;
+  $("d-tag").textContent=REGIONS[p.r];
+  const img=$("d-img"); img.src=`img/${p.id}.png`; img.alt=p.title+" (Gray's Anatomy plate)";
+  $("plate").style.maxWidth = Math.max(p.W,320)*1.15+"px";
+  const st = dState[p.id] ||= {};
+  const layer=$("d-layer"); layer.innerHTML="";
+  const rows=$("d-rows"); rows.innerHTML="";
+  let n=0;
+  p.items.forEach(it=>{
+    const el=document.createElement("div");
+    if(it.t==="m"){ el.className="mk blank"; Object.assign(el.style,{left:it.x/p.W*100+"%",top:it.y/p.H*100+"%",width:it.w/p.W*100+"%",height:it.h/p.H*100+"%"}); layer.appendChild(el); return; }
+    n++; const k=n; it.k=k;
+    el.className="mk"+(it.t==="p"?" pin":""); el.textContent=k; el.dataset.k=k;
+    if(it.t==="p") Object.assign(el.style,{left:it.x/p.W*100+"%",top:it.y/p.H*100+"%"});
+    else Object.assign(el.style,{left:it.x/p.W*100+"%",top:it.y/p.H*100+"%",width:it.w/p.W*100+"%",height:it.h/p.H*100+"%"});
+    el.onclick=()=>selectItem(k,true);
+    layer.appendChild(el);
+    const li=document.createElement("li"); li.className="drow"; li.dataset.k=k;
+    li.innerHTML=`<span class="n">${k}</span><input id="d-in-${p.id}-${k}" autocomplete="off" spellcheck="false" placeholder="Name structure ${k}"><button type="button">Show</button>`;
+    const inp=li.querySelector("input");
+    inp.addEventListener("focus",()=>selectItem(k,false));
+    inp.addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); check(k); } });
+    inp.addEventListener("blur",()=>{ if(inp.value.trim() && !st[k]) check(k,true); });
+    li.querySelector("button").onclick=()=>{ st[k]="shown"; inp.value=it.a; paint(); nextOpen(k); };
+    rows.appendChild(li);
+    if(st[k]==="ok"||st[k]==="shown") inp.value=it.a;
+  });
+  dSel=null; paint(); renderBank();
+}
+function itemByK(k){ return quizItems(dPlates[dIdx])[k-1]; }
+function selectItem(k,focus){
+  dSel=k; document.querySelectorAll(".mk").forEach(m=>m.classList.toggle("sel",+m.dataset.k===k));
+  if(focus){ const inp=document.querySelector(`.drow[data-k="${k}"] input`); inp.focus({preventScroll:true}); inp.scrollIntoView({block:"nearest"}); }
+}
+function check(k,quiet){
+  const p=dPlates[dIdx], st=dState[p.id], it=itemByK(k);
+  const row=document.querySelector(`.drow[data-k="${k}"]`), inp=row.querySelector("input");
+  if(st[k]) { if(!quiet) nextOpen(k); return; }
+  if(matches(inp.value,it)){ st[k]="ok"; inp.value=it.a; paint(); if(!quiet) nextOpen(k); }
+  else { row.classList.add("wrong"); setTimeout(()=>row.classList.remove("wrong"),900); if(!quiet) missed.set("d"+p.id+k,{name:it.a,bone:p.title}), renderMissed(); }
+}
+function nextOpen(k){
+  const p=dPlates[dIdx], st=dState[p.id], tot=quizItems(p).length;
+  for(let i=1;i<=tot;i++){ const j=((k-1+i)%tot)+1; if(!st[j]){ selectItem(j,true); return; } }
+}
+function paint(){
+  const p=dPlates[dIdx], st=dState[p.id]||{}, tot=quizItems(p).length;
+  let ok=0,sh=0;
+  document.querySelectorAll(".drow").forEach(r=>{const k=+r.dataset.k; r.classList.toggle("ok",st[k]==="ok"); r.classList.toggle("shown",st[k]==="shown"); r.querySelector("input").readOnly=!!st[k]; if(st[k]==="ok")ok++; if(st[k]==="shown")sh++;});
+  document.querySelectorAll(".mk[data-k]").forEach(m=>{const k=+m.dataset.k; m.classList.toggle("ok",st[k]==="ok"); m.classList.toggle("shown",st[k]==="shown");});
+  $("d-prog").textContent=`${ok} named · ${sh} shown · ${tot-ok-sh} left of ${tot}`;
+  renderBank();
+}
+let bankOn=false;
+function renderBank(){
+  const box=$("d-bankbox"); box.hidden=!bankOn; if(!bankOn) return;
+  const p=dPlates[dIdx], st=dState[p.id]||{}; box.innerHTML="";
+  const names=[...new Set(quizItems(p).map(it=>it.a))].sort();
+  names.forEach(nm=>{const b=document.createElement("button");b.type="button";b.textContent=nm;
+    const used=quizItems(p).filter(it=>it.a===nm).every(it=>st[it.k]); if(used) b.classList.add("used");
+    b.onclick=()=>{ if(!dSel) return; const inp=document.querySelector(`.drow[data-k="${dSel}"] input`); if(inp.readOnly) return; inp.value=nm; check(dSel); };
+    box.appendChild(b)});
+}
+$("d-bank").onclick=()=>{bankOn=!bankOn; $("d-bank").textContent=bankOn?"Hide word bank":"Show word bank"; renderBank();};
+$("d-revall").onclick=()=>{const p=dPlates[dIdx],st=dState[p.id]; quizItems(p).forEach(it=>{ if(!st[it.k]) st[it.k]="shown"; }); renderPlate();};
+$("d-reset").onclick=()=>{dState[dPlates[dIdx].id]={}; renderPlate();};
+$("d-pick").onchange=e=>{dIdx=+e.target.value; renderPlate();};
+$("d-prev").onclick=()=>{dIdx=(dIdx-1+dPlates.length)%dPlates.length; $("d-pick").value=dIdx; renderPlate();};
+$("d-next").onclick=()=>{dIdx=(dIdx+1)%dPlates.length; $("d-pick").value=dIdx; renderPlate();};
+
+// flashcards
+let deck=[], flipped=false, reverse=false, known=0, total=0;
+function newDeck(){ deck=shuffle(pool()); total=deck.length; known=0; flipped=false; renderCard(); }
+function renderCard(){
+  const c=$("card");
+  $("c-count").textContent = `${known} known · ${deck.length} left of ${total}`;
+  if(!deck.length){ c.innerHTML=`<div class="big">Deck cleared.</div><div class="tip">Every card in these regions marked as known. Reshuffle to go again, or switch to the station quiz.</div>`; $("c-tag").textContent="Done"; return; }
+  const it=deck[0]; $("c-tag").textContent=REGIONS[it.r];
+  const front = reverse
+    ? `<div class="bone">${it.whole?"Which bone or structure?":esc(it.bone)}</div><div class="tip">${esc(it.tip)}</div><div class="hint">Name it, then tap to check.</div>`
+    : `<div class="big">${esc(it.name)}</div><div class="hint">Which bone is it on, and where? Tap to flip.</div>`;
+  const back = `<div class="bone">${esc(it.bone)}</div><div class="big">${esc(it.name)}</div><div class="tip">${esc(it.tip)}</div>`;
+  c.innerHTML = flipped?back:front;
+}
+function flip(){ if(!deck.length) return; flipped=!flipped; renderCard(); }
+function got(){ if(!deck.length) return; deck.shift(); known++; flipped=false; renderCard(); }
+function again(){ if(!deck.length) return; const it=deck.shift(); const pos=Math.min(deck.length, 3+Math.floor(Math.random()*4)); deck.splice(pos,0,it); flipped=false; renderCard(); }
+$("card").onclick=flip;
+$("c-got").onclick=got; $("c-again").onclick=again;
+$("c-shuf").onclick=newDeck;
+$("c-rev").onclick=()=>{ reverse=!reverse; $("c-rev").textContent= reverse?"Reverse: show name first":"Reverse: show clue first"; flipped=false; renderCard(); };
+document.addEventListener("keydown",e=>{
+  if($("v-cards").hidden) return;
+  if(e.key===" "){e.preventDefault();flip()} else if(e.key==="ArrowRight") got(); else if(e.key==="ArrowLeft") again();
+});
+
+// quiz
+let station=1, right=0, asked=0, cur=null; const missed=new Map();
+function pickDistractors(cands, n){ return shuffle(cands).slice(0,n); }
+function newQ(){
+  const P=pool(); if(!P.length) return;
+  const it=P[Math.floor(Math.random()*P.length)];
+  const nameHasBone = it.name.toLowerCase().includes(it.bone.toLowerCase().split(" ")[0]);
+  const typeB = !it.whole && !nameHasBone && Math.random()<0.4;
+  let prompt, answer, opts;
+  if(typeB){
+    // which bone has this structure
+    const sameNameBones = new Set(ITEMS.filter(x=>x.name===it.name).map(x=>x.bone));
+    let bones=[...new Set(P.filter(x=>x.r===it.r && !x.bone.includes("+") && x.bone!=="Suture").map(x=>x.bone))].filter(b=>!sameNameBones.has(b));
+    if(bones.length<3) bones=[...new Set(ITEMS.filter(x=>!x.bone.includes("+")&&x.bone!=="Suture").map(x=>x.bone))].filter(b=>!sameNameBones.has(b));
+    answer=it.bone; opts=shuffle([answer,...pickDistractors(bones,3)]);
+    prompt=`Which bone has the <b>${esc(it.name.toLowerCase())}</b>?`;
+  } else {
+    // pin description -> name
+    const taken=new Set([it.name]);
+    let c=[];
+    const add=list=>{ for(const x of shuffle(list)){ if(c.length>=3) break; if(!taken.has(x.name)){ taken.add(x.name); c.push(x.name);} } };
+    add(P.filter(x=>x.bone===it.bone && x.id!==it.id));
+    add(P.filter(x=>x.r===it.r && x.whole===it.whole));
+    add(P.filter(x=>x.r===it.r));
+    answer=it.name; opts=shuffle([answer,...c]);
+    const where = it.whole ? "" : `On the <b>${esc(it.bone.toLowerCase())}</b>, the pin is on: `;
+    prompt = `${where}${esc(it.tip)}<br><br>Name the ${it.whole?"bone or structure":"structure"}.`;
+  }
+  cur={it,answer};
+  $("q-tag").textContent=`Station ${station}`;
+  $("q-text").innerHTML=prompt;
+  const box=$("q-opts"); box.innerHTML="";
+  opts.forEach((o,i)=>{const b=document.createElement("button");b.className="opt";b.id="opt-"+i;b.textContent=o;b.onclick=()=>answerQ(b,o);box.appendChild(b)});
+  $("q-exp").hidden=true; $("q-next").hidden=true;
+  renderScore();
+}
+function answerQ(btn,o){
+  asked++; const ok=o===cur.answer; if(ok) right++; else missed.set(cur.it.id,cur.it);
+  document.querySelectorAll(".opt").forEach(b=>{b.disabled=true; if(b.textContent===cur.answer) b.classList.add("right");});
+  if(!ok) btn.classList.add("wrong");
+  const it=cur.it;
+  $("q-exp").innerHTML=`<b>${esc(it.name)}</b> (${esc(it.bone)}). ${esc(it.tip)}`;
+  $("q-exp").hidden=false; $("q-next").hidden=false; $("q-next").focus();
+  renderScore(); renderMissed();
+}
+function renderScore(){ $("q-score").textContent = asked? `${right} / ${asked} correct · ${Math.round(100*right/asked)}%` : "No stations yet"; }
+function renderMissed(){
+  const ul=$("q-missed-list"); ul.innerHTML="";
+  [...missed.values()].forEach(it=>{const li=document.createElement("li");li.innerHTML=`<b>${esc(it.name)}</b>, ${esc(it.bone)}`;ul.appendChild(li)});
+  $("q-missed").hidden = missed.size===0;
+}
+$("q-next").onclick=()=>{station++; newQ();};
+$("q-reset").onclick=()=>{station=1;right=0;asked=0;missed.clear();renderMissed();newQ();};
+
+newDeck(); newQ(); dFilter();
+</script>
+
+
+</body></html>
